@@ -30,7 +30,8 @@ const config = {
     loaders: loaders
   },
   node: {
-    fs: "empty"
+    fs: "empty",
+    child_process: "empty"
   }
 };
 

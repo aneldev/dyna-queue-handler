@@ -38,7 +38,8 @@ const config = {
     // })
   ],
   node: {
-    fs: "empty"
+    fs: "empty",
+    child_process: "empty"
   }
 };
 

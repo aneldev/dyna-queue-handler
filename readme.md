@@ -1,14 +1,16 @@
 ﻿# About
 
-DynaQueueHandler is a Queue Job handler for node.js services. It uses the disk (via `dyna-disk-memory`) to save the queue.
+`DynaQueueHandler` is a Queue Job handler for node.js services. It uses the disk (via `dyna-disk-memory`) to save the queue.
 
-DynaQueueHandler is **simple**. It consistent only from two methods, `addJob` and `pickJob`. Instead of use of the `pickJob` method you can listen to on `job` event and pick the job whenever is possible. That's all!
+`DynaQueueHandler`is **universal**! While the `dyna-disk-memory` is universal you use it on any browser with the limitation of browser's `localStorage`. _Currently the lower is 15mb._
+
+`DynaQueueHandler` is **simple**. It consistent only from two methods, `addJob` and `pickJob`. Instead of use of the `pickJob` method you can listen to on `job` event and pick the job whenever is possible. That's all!
 
 What it supports
 
 - intensive calls of `addJob`
 - promises everywhere
-- fast disk indexing
+- fast disk indexing (for node.js)
 - no database dependency
 - no memory consumption
 - one job per time logic
@@ -62,7 +64,7 @@ The constructor accepts object with the ISettings interface.
 
 The only needed property is the `diskPath` where can be relative or root based.
 
-Only one instance of DynaQueueHandler is allowed to use the same disk path.
+**Note!** Only one instance of `DynaQueueHandler` is allowed to use the same disk path.
 
 Example:
 ```
@@ -115,9 +117,9 @@ The advanced use of methods is that are using the groups, nothing more.
 
 Every job you add (or pick) belongs to a group, by this way you have multiple and simultaneous job queues. Even when you don't use groups, your jobs are saved in the `__defaultGroup` group. 
 
-This is useful when you want to have multiple priorities. Instead to create multiple DynaQueueHandlers with different diskPaths, you can use the groups. 
+This is useful when you want to have multiple priorities. Instead to create multiple `DynaQueueHandler`s with different diskPaths, you can use the groups. 
 
-All the methods of the DynaQueueHandler support the group argument, even the events.
+All the methods of the `DynaQueueHandler` support the group argument, even the events.
 
 In this section the full signature of the methods is shown.
 
