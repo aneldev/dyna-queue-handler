@@ -1,5 +1,5 @@
-import {DynaQueueHandler, IJob} from "./DynaQueueHandler";
+import {DynaQueueHandler, IJob, IGroupJobsView} from "./DynaQueueHandler";
 
 export {
-  DynaQueueHandler, IJob
+  DynaQueueHandler, IJob, IGroupJobsView
 }
