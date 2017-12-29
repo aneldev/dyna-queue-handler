@@ -191,7 +191,7 @@ export class DynaQueueHandler extends EventEmitter {
     return this;
   }
 
-  private _callJobListener(forGroup: string): Promise<undefined> {
+  private _callJobListener(forGroup: string): Promise<void> {
     // automatically adds this in internal job queue
     return this._internalJobQueue.addJobPromise(async (resolve: (data: any) => void, reject: (error: any) => void) => {
       const eventName: string = forGroup === '__defaultGroup' ? 'job' : `job/${forGroup}`;
@@ -209,11 +209,11 @@ export class DynaQueueHandler extends EventEmitter {
     }, 0);
   }
 
-  public delGroup(group: string): Promise<undefined> {
+  public delGroup(group: string): Promise<void> {
     return this._memory.delContainer(group);
   }
 
-  public delAll(): Promise<undefined> {
+  public delAll(): Promise<void> {
     return this._memory.delAll();
   }
 
