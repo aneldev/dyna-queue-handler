@@ -19,7 +19,7 @@ It is written in Typescript but can be used from plain Javascript as well.
 
 # Installation
 
-`npm run --save dyna-queue-handler`
+`npm install --save dyna-queue-handler`
 
 # Usage
 ## Example with on `job` event  
