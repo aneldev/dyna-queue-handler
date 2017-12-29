@@ -18,12 +18,12 @@ if (STRESS_MODE) console.log('WARNING: test is running in Stress Mode, will be s
 
 const TEST_RECORDS_COUNT = STRESS_MODE ? 400 : 20;
 
-import {IGroupJobsView, IGroupJobsViewItem, IJob} from "../src/DynaQueueHanlder";
+import {IGroupJobsView, IGroupJobsViewItem, IJob} from "../../src/DynaQueueHanlder";
 
 declare let jasmine: any, describe: any, expect: any, it: any;
 if (typeof jasmine !== 'undefined') jasmine.DEFAULT_TIMEOUT_INTERVAL = TEST_RECORDS_COUNT * 800;
 
-import {DynaQueueHandler} from '../src';
+import {DynaQueueHandler} from '../../src/index';
 import {forTimes, forLoopToArray, shuffleArray} from "dyna-loops";
 
 let queue = new DynaQueueHandler({diskPath: './temp/testDynaQueueHandler'});
