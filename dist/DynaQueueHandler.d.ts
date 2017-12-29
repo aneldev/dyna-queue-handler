@@ -42,7 +42,7 @@ export declare class DynaQueueHandler extends EventEmitter {
     private _onJobIsWorking;
     on(eventName: string | symbol, listener: Function): any;
     private _callJobListener(forGroup);
-    delGroup(group: string): Promise<undefined>;
-    delAll(): Promise<undefined>;
+    delGroup(group: string): Promise<void>;
+    delAll(): Promise<void>;
     readonly isWorking: boolean;
 }

@@ -67,7 +67,7 @@ export class DynaQueueHandler extends EventEmitter {
     };
 
     // get the container handler (if exists)
-    let containerHandler: IGroupHandler = await this._memory.get(group, 'handler');
+    let containerHandler: IGroupHandler = await this._memory.get<IGroupHandler>(group, 'handler');
 
     // if container handler doesn't exist, create one with virgin values
     if (!containerHandler) containerHandler = {};
@@ -81,7 +81,7 @@ export class DynaQueueHandler extends EventEmitter {
 
     // update the current last pushed job, that the next of it is this one
     if (containerHandler[priority].lastJobId) {
-      let lastJob: IJob = await this._memory.get(group, containerHandler[priority].lastJobId);
+      let lastJob: IJob = await this._memory.get<IJob>(group, containerHandler[priority].lastJobId);
       if (lastJob) {
         lastJob.nextJobId = job.id;
         await this._memory.set(group, lastJob.id, lastJob);
@@ -164,9 +164,9 @@ export class DynaQueueHandler extends EventEmitter {
       if (priority === undefined) return undefined;
     }
 
-    let groupHandler: IGroupHandler = await this._memory.get(group, 'handler');
+    let groupHandler: IGroupHandler = await this._memory.get<IGroupHandler>(group, 'handler');
     let nextJobId: string = groupHandler && groupHandler[priority] && groupHandler[priority].nextJobId;
-    let job: IJob = nextJobId && await this._memory.get(group, nextJobId);
+    let job: IJob = nextJobId && await this._memory.get<IJob>(group, nextJobId);
 
     if (job) {
       groupHandler[priority].nextJobId = job.nextJobId; // job.nextJobId might be null, this is normal because this is the last one

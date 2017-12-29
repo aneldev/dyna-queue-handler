@@ -48,7 +48,7 @@
   "license": "MIT",
   "dependencies": {
     "babel-polyfill": "^6.9.1",
-    "dyna-disk-memory": "^1.0.8",
+    "dyna-disk-memory": "^2.0.1",
     "dyna-guid": "^1.0.1",
     "dyna-job-queue": "^1.0.23"
   },
