@@ -1,2 +1,2 @@
-import { DynaQueueHandler, IJob } from "./DynaQueueHanlder";
+import { DynaQueueHandler, IJob } from "./DynaQueueHandler";
 export { DynaQueueHandler, IJob };
