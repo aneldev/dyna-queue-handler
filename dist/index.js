@@ -151,7 +151,7 @@ var EventEmitter = __webpack_require__(5);
 var dyna_disk_memory_1 = __webpack_require__(2);
 var dyna_job_queue_1 = __webpack_require__(4);
 var dyna_guid_1 = __webpack_require__(3);
-var DynaQueueHandler = (function (_super) {
+var DynaQueueHandler = /** @class */ (function (_super) {
     __extends(DynaQueueHandler, _super);
     function DynaQueueHandler(settings) {
         var _this = _super.call(this) || this;
