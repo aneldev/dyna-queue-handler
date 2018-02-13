@@ -50,7 +50,7 @@
     "babel-polyfill": "^6.26.0",
     "dyna-disk-memory": "^2.0.3",
     "dyna-guid": "^1.0.5",
-    "dyna-job-queue": "^1.0.23"
+    "dyna-job-queue": "^1.0.24"
   },
   "devDependencies": {
     "@types/jest": "^20.0.8",
