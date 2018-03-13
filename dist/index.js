@@ -412,19 +412,19 @@ exports.DynaQueueHandler = DynaQueueHandler;
 /* 2 */
 /***/ (function(module, exports) {
 
-module.exports = require("dyna-disk-memory");
+module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
 
 /***/ }),
 /* 3 */
 /***/ (function(module, exports) {
 
-module.exports = require("dyna-guid");
+module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
 /***/ }),
 /* 4 */
 /***/ (function(module, exports) {
 
-module.exports = require("dyna-job-queue");
+module.exports = __WEBPACK_EXTERNAL_MODULE_4__;
 
 /***/ }),
 /* 5 */
