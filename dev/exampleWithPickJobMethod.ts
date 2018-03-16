@@ -1,7 +1,7 @@
 import {DynaQueueHandler} from "../src";
 
 const queue: DynaQueueHandler = new DynaQueueHandler({
-  diskPath: './debug/queueDisk'
+  diskPath: './temp/queueDisk'
 });
 
 async function runForPlay(){

@@ -1,7 +1,7 @@
 import {DynaQueueHandler, IJob} from "../src";
 
 const queue: DynaQueueHandler = new DynaQueueHandler({
-  diskPath: './debug/queueDisk'
+  diskPath: './temp/queueDisk'
 });
 
 queue.on('job', (job: IJob, done: Function) => {
