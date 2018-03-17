@@ -50,7 +50,7 @@
   "author": "Anel dev",
   "license": "MIT",
   "dependencies": {
-    "dyna-disk-memory": "^2.0.6",
+    "dyna-disk-memory": "^2.0.7",
     "dyna-guid": "^1.0.8",
     "dyna-job-queue": "^1.0.25"
   },
