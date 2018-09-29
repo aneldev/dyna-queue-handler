@@ -23,7 +23,7 @@ import {IGroupJobsView, IGroupJobsViewItem, IJob} from "../../src/DynaQueueHandl
 declare let jasmine: any, describe: any, expect: any, it: any;
 if (typeof jasmine !== 'undefined') jasmine.DEFAULT_TIMEOUT_INTERVAL = TEST_RECORDS_COUNT * 800;
 
-import {DynaQueueHandler} from '../../src/index';
+import {DynaQueueHandler} from '../../src';
 import {forTimes, forLoopToArray, shuffleArray} from "dyna-loops";
 
 let queue = new DynaQueueHandler({diskPath: './temp/testDynaQueueHandler'});

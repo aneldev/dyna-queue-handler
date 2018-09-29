@@ -1,7 +1,7 @@
 import * as EventEmitter from 'events';
-import {DynaDiskMemory} from "dyna-disk-memory";
-import {DynaJobQueue, IQJob} from "dyna-job-queue"
-import {guid} from "dyna-guid";
+import {DynaDiskMemory}  from "dyna-disk-memory";
+import {DynaJobQueue}    from "dyna-job-queue"
+import {guid}            from "dyna-guid";
 
 export interface ISettings {
   diskPath: string;
@@ -51,9 +51,7 @@ export class DynaQueueHandler extends EventEmitter {
   private _internalJobQueue: DynaJobQueue = new DynaJobQueue();
 
   public addJob(data: any, priority: number = 1, group: string = '__defaultGroup'): Promise<IJob> {
-    return this._internalJobQueue.addJobPromise((resolve: (job: IJob) => void, reject: (error: any) => void) => {
-      this._addJob(data, priority, group).then(resolve).catch(reject);
-    }, 1); // internal job queue priority 1
+    return this._internalJobQueue.addJobPromised<IJob>(() => this._addJob(data, priority, group), 1); // internal job queue priority 1
   }
 
   private async _addJob(data: any, priority: number = 1, group: string = '__defaultGroup'): Promise<IJob> {
@@ -116,9 +114,7 @@ export class DynaQueueHandler extends EventEmitter {
 
   // get a view, the number of pending jobs of a group, at this time
   public viewJobs(group: string = '__defaultGroup'): Promise<IGroupJobsView> {
-    return this._internalJobQueue.addJobPromise((resolve: (view: IGroupJobsView) => void, reject: (error: any) => void) => {
-      this._viewJobs(group).then(resolve).catch(reject);
-    }, 0);
+    return this._internalJobQueue.addJobPromised<IGroupJobsView>(() => this._viewJobs(group), 0);
   }
 
   private _viewJobs(group: string = '__defaultGroup'): Promise<IGroupJobsView> {
@@ -149,9 +145,7 @@ export class DynaQueueHandler extends EventEmitter {
   }
 
   public pickJob(priority: number = undefined, group: string = '__defaultGroup'): Promise<IJob> {
-    return this._internalJobQueue.addJobPromise((resolve: (job: IJob) => void, reject: (error: any) => void) => {
-      this._pickJob(priority, group).then(resolve).catch(reject);
-    }, 0); // internal job queue priority 0
+    return this._internalJobQueue.addJobPromised<IJob>(() => this._pickJob(priority, group), 0); // internal job queue priority 0
   }
 
   private async _pickJob(priority: number = undefined, group: string = '__defaultGroup'): Promise<IJob> {
