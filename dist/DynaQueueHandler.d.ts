@@ -34,14 +34,14 @@ export declare class DynaQueueHandler extends EventEmitter {
     private _memory;
     private _internalJobQueue;
     addJob(data: any, priority?: number, group?: string): Promise<IJob>;
-    private _addJob(data, priority?, group?);
+    private _addJob;
     viewJobs(group?: string): Promise<IGroupJobsView>;
-    private _viewJobs(group?);
+    private _viewJobs;
     pickJob(priority?: number, group?: string): Promise<IJob>;
-    private _pickJob(priority?, group?);
+    private _pickJob;
     private _onJobIsWorking;
     on(eventName: string | symbol, listener: Function): any;
-    private _callJobListener(forGroup);
+    private _callJobListener;
     delGroup(group: string): Promise<void>;
     delAll(): Promise<void>;
     readonly isWorking: boolean;

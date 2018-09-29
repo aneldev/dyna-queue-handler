@@ -18,7 +18,7 @@ if (STRESS_MODE) console.log('WARNING: test is running in Stress Mode, will be s
 
 const TEST_RECORDS_COUNT = STRESS_MODE ? 400 : 20;
 
-import {IGroupJobsView, IGroupJobsViewItem, IJob} from "../../src/DynaQueueHandler";
+import {IGroupJobsView, IGroupJobsViewItem, IJob} from "../../src";
 
 declare let jasmine: any, describe: any, expect: any, it: any;
 if (typeof jasmine !== 'undefined') jasmine.DEFAULT_TIMEOUT_INTERVAL = TEST_RECORDS_COUNT * 800;
@@ -26,9 +26,9 @@ if (typeof jasmine !== 'undefined') jasmine.DEFAULT_TIMEOUT_INTERVAL = TEST_RECO
 import {DynaQueueHandler} from '../../src';
 import {forTimes, forLoopToArray, shuffleArray} from "dyna-loops";
 
-let queue = new DynaQueueHandler({diskPath: './temp/testDynaQueueHandler'});
+let queue = new DynaQueueHandler({diskPath: './temp/testDynaQueueHandler-stress-test'});
 
-describe('Dyna Queue Handler with default group', () => {
+describe('Dyna Queue Handler stress test', () => {
 
   it(`should clear the disk before start`, (done: Function) => {
     queue.delAll()
@@ -45,7 +45,7 @@ describe('Dyna Queue Handler with default group', () => {
     let added: number = 0;
     forTimes(TEST_RECORDS_COUNT, (index: number) => {
       queue.addJob({testId: index})
-        .then((job: IJob) => {
+        .then((job: IJob<any>) => {
           added++;
           expect(job.data.testId).toBe(index);
           if (added == TEST_RECORDS_COUNT) done();
@@ -58,7 +58,7 @@ describe('Dyna Queue Handler with default group', () => {
     let receivedJobs: number = 0;
     forTimes(TEST_RECORDS_COUNT, (index: number) => {
       queue.pickJob()
-        .then((job: IJob) => {
+        .then((job: IJob<any>) => {
           expect(job && job.data.testId).toBe(index);
           receivedJobs++;
           if (receivedJobs == TEST_RECORDS_COUNT) expect(queue.isWorking).toBe(false);
@@ -79,10 +79,10 @@ describe('Dyna Queue Handler with default group', () => {
 
   // add pick with events
 
-  const pickWithEventsCollectionAllJobs: IJob[] = [];
-  const pickWithEventsCollectionSuperGroup: IJob[] = [];
-  const updatePickWithEventsCollectionAllJobs: (job: IJob, done: Function) => void = (job, done) => pickWithEventsCollectionAllJobs.push(job) && done();
-  const updatePickWithEventsCollectionSuperGroup: (job: IJob, done: Function) => void = (job, done) => pickWithEventsCollectionSuperGroup.push(job) && done();
+  const pickWithEventsCollectionAllJobs: IJob<any>[] = [];
+  const pickWithEventsCollectionSuperGroup: IJob<any>[] = [];
+  const updatePickWithEventsCollectionAllJobs: (job: IJob<any>, done: Function) => void = (job, done) => pickWithEventsCollectionAllJobs.push(job) && done();
+  const updatePickWithEventsCollectionSuperGroup: (job: IJob<any>, done: Function) => void = (job, done) => pickWithEventsCollectionSuperGroup.push(job) && done();
 
   it(`should add ${TEST_RECORDS_COUNT} jobs and listen for events`, (done: Function) => {
     let added: number = 0;
@@ -90,7 +90,7 @@ describe('Dyna Queue Handler with default group', () => {
     queue.on('job/super-group', updatePickWithEventsCollectionSuperGroup);
     forTimes(TEST_RECORDS_COUNT, (index: number) => {
       queue.addJob({testId: index}, index, 'super-group')
-        .then((job: IJob) => {
+        .then((job: IJob<any>) => {
           added++;
           if (added == TEST_RECORDS_COUNT) done();
         })
@@ -117,7 +117,7 @@ describe('Dyna Queue Handler with default group', () => {
     let added: number = 0;
     jobsWithWithDifferentPriorityTest1.forEach((jobInfo: any) => {
       queue.addJob(jobInfo.data, jobInfo.priority)
-        .then((job: IJob) => {
+        .then((job: IJob<any>) => {
           expect(job.data.testId).toBe(jobInfo.data.testId);
           expect(job.data.testId).toBe(jobInfo.priority);
           added++;
@@ -127,11 +127,9 @@ describe('Dyna Queue Handler with default group', () => {
   });
 
   it('should pick the jobs in correct order according the priority', (done: Function) => {
-    const collectedJobs: IJob[] = [];
     forTimes(jobsWithWithDifferentPriorityTest1.length, (iterator: number) => {
       queue.pickJob()
-        .then((job: IJob) => {
-          collectedJobs.push(job);
+        .then((job: IJob<any>) => {
           expect(job).not.toBe(null);
           expect(job).not.toBe(undefined);
           expect(job && job.data.testId).toBe(iterator);
@@ -163,7 +161,7 @@ describe('Dyna Queue Handler with default group', () => {
     let added: number = 0;
     jobsWithWithDifferentPriorityTest2.forEach((jobInfo: any) => {
       queue.addJob(jobInfo.data, jobInfo.priority)
-        .then((job: IJob) => {
+        .then((job: IJob<any>) => {
           expect(job.data.testId).toBe(jobInfo.data.testId);
           expect(job.priority).toBe(jobInfo.priority);
           added++;
@@ -173,11 +171,11 @@ describe('Dyna Queue Handler with default group', () => {
   });
 
   it('should pick the jobs in correct order according the priority', (done: Function) => {
-    const collectedJobs: IJob[] = [];
+    const collectedJobs: IJob<any>[] = [];
     forTimes(TEST_RECORDS_COUNT, (iRecordsCount: number) =>
       forTimes(RECORDS_IN_SAME_PRIORITY_COUNT, (iForId: number) => {// items with the same priority
         queue.pickJob()
-          .then((job: IJob) => {
+          .then((job: IJob<any>) => {
             collectedJobs.push(job);
             expect(job).not.toBe(null);
             expect(job).not.toBe(undefined);
@@ -200,7 +198,7 @@ describe('Dyna Queue Handler with default group', () => {
   // check the call back of the events when registered after the addition
 
   const testCollectionForDoneUsage: any[] = [];
-  const consumeEvent1 = (job: IJob, done: Function) => {
+  const consumeEvent1 = (job: IJob<any>, done: Function) => {
     testCollectionForDoneUsage.push({action: 'job execution', job, time: new Date()});
     setTimeout(() => done(), 10);
   };
@@ -208,7 +206,7 @@ describe('Dyna Queue Handler with default group', () => {
   it('should add items to use them later registered events', (done: Function) => {
     forTimes(TEST_RECORDS_COUNT, (i: number) => {
       let jobData: any = {jobId: i};
-      queue.addJob(jobData, 0, 'my-super-group').then((job: IJob) => {
+      queue.addJob(jobData, 0, 'my-super-group').then((job: IJob<any>) => {
         testCollectionForDoneUsage.push({action: 'job add', job});
         if (i == TEST_RECORDS_COUNT - 1) done();
       });
@@ -239,7 +237,7 @@ describe('Dyna Queue Handler with default group', () => {
   // check the call back of the events when the event registered in advance
 
   const testCollectionForDoneUsageOnTheSameTime: any[] = [];
-  const consumeEvent2 = (job: IJob, done: Function) => {
+  const consumeEvent2 = (job: IJob<any>, done: Function) => {
     testCollectionForDoneUsageOnTheSameTime.push({action: 'job execution', job, time: new Date()});
     setTimeout(() => done(), 100);
   };
@@ -249,7 +247,7 @@ describe('Dyna Queue Handler with default group', () => {
     forTimes(TEST_RECORDS_COUNT, (iterate: number) => {
       let jobData: any = {jobId: iterate};
       queue.addJob(jobData, 0, 'my-super-group-2')
-        .then((job: IJob) => {
+        .then((job: IJob<any>) => {
           testCollectionForDoneUsageOnTheSameTime.push({action: 'job add', job});
           if (iterate == TEST_RECORDS_COUNT - 1) done();
         })

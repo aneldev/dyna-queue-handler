@@ -7,12 +7,12 @@ export interface ISettings {
   diskPath: string;
 }
 
-export interface IJob {
+export interface IJob<TData>  {
   id: string;
   arrived: Date;
   priority: Number;
   group: string;
-  data: any;
+  data: TData;
   nextJobId: string;
 }
 
@@ -50,12 +50,12 @@ export class DynaQueueHandler extends EventEmitter {
   private _memory: DynaDiskMemory;
   private _internalJobQueue: DynaJobQueue = new DynaJobQueue();
 
-  public addJob(data: any, priority: number = 1, group: string = '__defaultGroup'): Promise<IJob> {
-    return this._internalJobQueue.addJobPromised<IJob>(() => this._addJob(data, priority, group), 1); // internal job queue priority 1
+  public addJob<TData>(data: TData, priority: number = 1, group: string = '__defaultGroup'): Promise<IJob<TData>> {
+    return this._internalJobQueue.addJobPromised<IJob<TData>>(() => this._addJob(data, priority, group), 1); // internal job queue priority 1
   }
 
-  private async _addJob(data: any, priority: number = 1, group: string = '__defaultGroup'): Promise<IJob> {
-    const job: IJob = {
+  private async _addJob<TData>(data: TData, priority: number = 1, group: string = '__defaultGroup'): Promise<IJob<TData>> {
+    const job: IJob<TData> = {
       id: guid(1),
       arrived: new Date(),
       group,
@@ -79,7 +79,7 @@ export class DynaQueueHandler extends EventEmitter {
 
     // update the current last pushed job, that the next of it is this one
     if (containerHandler[priority].lastJobId) {
-      let lastJob: IJob = await this._memory.get<IJob>(group, containerHandler[priority].lastJobId);
+      let lastJob: IJob<TData> = await this._memory.get<IJob<TData>>(group, containerHandler[priority].lastJobId);
       if (lastJob) {
         lastJob.nextJobId = job.id;
         await this._memory.set(group, lastJob.id, lastJob);
@@ -144,11 +144,11 @@ export class DynaQueueHandler extends EventEmitter {
     });
   }
 
-  public pickJob(priority: number = undefined, group: string = '__defaultGroup'): Promise<IJob> {
-    return this._internalJobQueue.addJobPromised<IJob>(() => this._pickJob(priority, group), 0); // internal job queue priority 0
+  public pickJob<TData>(priority: number = undefined, group: string = '__defaultGroup'): Promise<IJob<TData>> {
+    return this._internalJobQueue.addJobPromised<IJob<TData>>(() => this._pickJob(priority, group), 0); // internal job queue priority 0
   }
 
-  private async _pickJob(priority: number = undefined, group: string = '__defaultGroup'): Promise<IJob> {
+  private async _pickJob<TData>(priority: number = undefined, group: string = '__defaultGroup'): Promise<IJob<TData>> {
     if (priority === undefined) {
       const view: IGroupJobsView = await this._viewJobs(group); // call the private version that doesn't use the job queue!
       const groupJobViewItem: IGroupJobsViewItem = view.items
@@ -160,7 +160,7 @@ export class DynaQueueHandler extends EventEmitter {
 
     let groupHandler: IGroupHandler = await this._memory.get<IGroupHandler>(group, 'handler');
     let nextJobId: string = groupHandler && groupHandler[priority] && groupHandler[priority].nextJobId;
-    let job: IJob = nextJobId && await this._memory.get<IJob>(group, nextJobId);
+    let job: IJob<TData> = nextJobId && await this._memory.get<IJob<TData>>(group, nextJobId);
 
     if (job) {
       groupHandler[priority].nextJobId = job.nextJobId; // job.nextJobId might be null, this is normal because this is the last one
@@ -190,7 +190,7 @@ export class DynaQueueHandler extends EventEmitter {
     return this._internalJobQueue.addJobPromise(async (resolve: (data: any) => void, reject: (error: any) => void) => {
       const eventName: string = forGroup === '__defaultGroup' ? 'job' : `job/${forGroup}`;
       if (this.listenerCount(eventName) && !this._onJobIsWorking[eventName]) {
-        const job: IJob = await this._pickJob(undefined, forGroup);
+        const job: IJob<any> = await this._pickJob(undefined, forGroup);
         if (job) {
           this._onJobIsWorking[eventName] = true;
           this.emit(eventName, job, () => {

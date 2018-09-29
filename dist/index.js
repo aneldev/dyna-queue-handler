@@ -126,8 +126,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
         while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
                 case 4: _.label++; return { value: op[1], done: false };
@@ -165,9 +165,7 @@ var DynaQueueHandler = /** @class */ (function (_super) {
         var _this = this;
         if (priority === void 0) { priority = 1; }
         if (group === void 0) { group = '__defaultGroup'; }
-        return this._internalJobQueue.addJobPromise(function (resolve, reject) {
-            _this._addJob(data, priority, group).then(resolve).catch(reject);
-        }, 1); // internal job queue priority 1
+        return this._internalJobQueue.addJobPromised(function () { return _this._addJob(data, priority, group); }, 1); // internal job queue priority 1
     };
     DynaQueueHandler.prototype._addJob = function (data, priority, group) {
         if (priority === void 0) { priority = 1; }
@@ -244,9 +242,7 @@ var DynaQueueHandler = /** @class */ (function (_super) {
     DynaQueueHandler.prototype.viewJobs = function (group) {
         var _this = this;
         if (group === void 0) { group = '__defaultGroup'; }
-        return this._internalJobQueue.addJobPromise(function (resolve, reject) {
-            _this._viewJobs(group).then(resolve).catch(reject);
-        }, 0);
+        return this._internalJobQueue.addJobPromised(function () { return _this._viewJobs(group); }, 0);
     };
     DynaQueueHandler.prototype._viewJobs = function (group) {
         var _this = this;
@@ -280,9 +276,7 @@ var DynaQueueHandler = /** @class */ (function (_super) {
         var _this = this;
         if (priority === void 0) { priority = undefined; }
         if (group === void 0) { group = '__defaultGroup'; }
-        return this._internalJobQueue.addJobPromise(function (resolve, reject) {
-            _this._pickJob(priority, group).then(resolve).catch(reject);
-        }, 0); // internal job queue priority 0
+        return this._internalJobQueue.addJobPromised(function () { return _this._pickJob(priority, group); }, 0); // internal job queue priority 0
     };
     DynaQueueHandler.prototype._pickJob = function (priority, group) {
         if (priority === void 0) { priority = undefined; }
@@ -345,8 +339,8 @@ var DynaQueueHandler = /** @class */ (function (_super) {
         var _this = this;
         // automatically adds this in internal job queue
         return this._internalJobQueue.addJobPromise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-            var _this = this;
             var eventName, job;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:

@@ -3,12 +3,12 @@ import * as EventEmitter from 'events';
 export interface ISettings {
     diskPath: string;
 }
-export interface IJob {
+export interface IJob<TData> {
     id: string;
     arrived: Date;
     priority: Number;
     group: string;
-    data: any;
+    data: TData;
     nextJobId: string;
 }
 export interface IGroupHandler {
@@ -33,11 +33,11 @@ export declare class DynaQueueHandler extends EventEmitter {
     private _settings;
     private _memory;
     private _internalJobQueue;
-    addJob(data: any, priority?: number, group?: string): Promise<IJob>;
+    addJob<TData>(data: TData, priority?: number, group?: string): Promise<IJob<TData>>;
     private _addJob;
     viewJobs(group?: string): Promise<IGroupJobsView>;
     private _viewJobs;
-    pickJob(priority?: number, group?: string): Promise<IJob>;
+    pickJob<TData>(priority?: number, group?: string): Promise<IJob<TData>>;
     private _pickJob;
     private _onJobIsWorking;
     on(eventName: string | symbol, listener: Function): any;
