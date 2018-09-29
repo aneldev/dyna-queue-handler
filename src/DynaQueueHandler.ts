@@ -40,14 +40,14 @@ export class DynaQueueHandler {
   private _jobIndex: IJobIndex = {jobs: []};
   private _hasDiffPriorities: boolean = false;
   private _isWorking: boolean = false;
-  private _oder: number = 0;
+  private _order: number = 0;
 
   public async addJob<TData>(data: TData, priority: number = 1): Promise<void> {
     const jobId: string = guid(1);
     await this._memory.set('data', jobId, data);
     data = null; // for GC
 
-    this._jobIndex.jobs.push({jobId, priority, order: this._oder++});
+    this._jobIndex.jobs.push({jobId, priority, order: this._order++});
 
     if (
       !this._hasDiffPriorities &&
@@ -57,9 +57,7 @@ export class DynaQueueHandler {
       this._hasDiffPriorities = true;
     }
 
-    if (this._hasDiffPriorities) {
-      this._sortJobs();
-    }
+    if (this._hasDiffPriorities) this._sortJobs();
 
     this._queue.addJobCallback(async (done: () => void) => {
       const jobItem: IJobItem = this._jobIndex.jobs.shift();
