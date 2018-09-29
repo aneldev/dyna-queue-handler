@@ -146,7 +146,7 @@ var DynaQueueHandler = /** @class */ (function () {
         this._jobIndex = { jobs: [] };
         this._hasDiffPriorities = false;
         this._isWorking = false;
-        this._oder = 0;
+        this._order = 0;
         this._config = __assign({ parallels: 1 }, this._config);
         this._memory = new dyna_disk_memory_1.DynaDiskMemory({ diskPath: this._config.diskPath });
         this._queue = new dyna_job_queue_1.DynaJobQueue({ parallels: this._config.parallels });
@@ -168,15 +168,14 @@ var DynaQueueHandler = /** @class */ (function () {
                     case 1:
                         _a.sent();
                         data = null; // for GC
-                        this._jobIndex.jobs.push({ jobId: jobId, priority: priority, order: this._oder++ });
+                        this._jobIndex.jobs.push({ jobId: jobId, priority: priority, order: this._order++ });
                         if (!this._hasDiffPriorities &&
                             this._jobIndex.jobs.length > 1 &&
                             this._jobIndex.jobs[this._jobIndex.jobs.length - 2].priority !== priority) {
                             this._hasDiffPriorities = true;
                         }
-                        if (this._hasDiffPriorities) {
+                        if (this._hasDiffPriorities)
                             this._sortJobs();
-                        }
                         this._queue.addJobCallback(function (done) { return __awaiter(_this, void 0, void 0, function () {
                             var jobItem, data;
                             var _this = this;

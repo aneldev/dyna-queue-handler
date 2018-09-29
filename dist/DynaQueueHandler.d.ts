@@ -11,7 +11,7 @@ export declare class DynaQueueHandler {
     private _jobIndex;
     private _hasDiffPriorities;
     private _isWorking;
-    private _oder;
+    private _order;
     addJob<TData>(data: TData, priority?: number): Promise<void>;
     readonly hasJobs: boolean;
     readonly jobsCount: number;
