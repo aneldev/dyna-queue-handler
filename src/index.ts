@@ -1,7 +1,5 @@
 export {
   DynaQueueHandler,
-  IJob,
-  IGroupJobsView,
-  IGroupJobsViewItem,
+  IDynaQueueHandlerConfig,
 } from "./DynaQueueHandler";
 
