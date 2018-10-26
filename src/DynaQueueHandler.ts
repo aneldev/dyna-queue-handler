@@ -70,7 +70,13 @@ export class DynaQueueHandler {
         done();
         this._memory.del('data', jobItem.jobId)
           .catch((error:IError)=>{
-            console.error(`DynaQueueHandler: dyna-disk-memory cannot delete this job id [${jobItem.jobId}]`, error)
+            console.error(
+              `DynaQueueHandler: 1810261313 dyna-disk-memory cannot delete this job id [${jobItem.jobId}]
+                This is not a critical error (so far), the app is still running without any problem.
+                This error is occurred when:
+                - There are more than one instances that are using this folder (this is not allowed)
+                - A demon is monitoring and blocking the files (like webpack)
+                - Or, if this happens in production only, the disk has a problem (check the error)`, error)
           });
       });
 
