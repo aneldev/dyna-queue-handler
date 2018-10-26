@@ -194,7 +194,7 @@ var DynaQueueHandler = /** @class */ (function () {
                                             done();
                                             _this._memory.del('data', jobItem.jobId)
                                                 .catch(function (error) {
-                                                console.error("DynaQueueHandler: dyna-disk-memory cannot delete this job it [" + jobItem.jobId + "]", error);
+                                                console.error("DynaQueueHandler: dyna-disk-memory cannot delete this job id [" + jobItem.jobId + "]", error);
                                             });
                                         });
                                         data = null; // for GC
