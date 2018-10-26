@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("dyna-disk-memory"), require("dyna-guid"), require("dyna-job-queue"));
+		module.exports = factory(require("dyna-disk-memory"), require("dyna-guid"), require("dyna-interfaces"), require("dyna-job-queue"));
 	else if(typeof define === 'function' && define.amd)
-		define("dyna-queue-handler", ["dyna-disk-memory", "dyna-guid", "dyna-job-queue"], factory);
+		define("dyna-queue-handler", ["dyna-disk-memory", "dyna-guid", "dyna-interfaces", "dyna-job-queue"], factory);
 	else if(typeof exports === 'object')
-		exports["dyna-queue-handler"] = factory(require("dyna-disk-memory"), require("dyna-guid"), require("dyna-job-queue"));
+		exports["dyna-queue-handler"] = factory(require("dyna-disk-memory"), require("dyna-guid"), require("dyna-interfaces"), require("dyna-job-queue"));
 	else
-		root["dyna-queue-handler"] = factory(root["dyna-disk-memory"], root["dyna-guid"], root["dyna-job-queue"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_4__) {
+		root["dyna-queue-handler"] = factory(root["dyna-disk-memory"], root["dyna-guid"], root["dyna-interfaces"], root["dyna-job-queue"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_5__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -139,23 +139,54 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var dyna_disk_memory_1 = __webpack_require__(2);
 var dyna_guid_1 = __webpack_require__(3);
-var dyna_job_queue_1 = __webpack_require__(4);
+var dyna_interfaces_1 = __webpack_require__(4);
+var dyna_job_queue_1 = __webpack_require__(5);
 var DynaQueueHandler = /** @class */ (function () {
     function DynaQueueHandler(_config) {
+        var _this = this;
         this._config = _config;
         this._jobIndex = { jobs: [] };
         this._hasDiffPriorities = false;
         this._isWorking = false;
         this._order = 0;
+        this._updateIsNotWorking = [];
         this._config = __assign({ parallels: 1 }, this._config);
         this._memory = new dyna_disk_memory_1.DynaDiskMemory({ diskPath: this._config.diskPath });
-        this._queue = new dyna_job_queue_1.DynaJobQueue({ parallels: this._config.parallels });
-        this._memory.delAll()
-            .catch(function (error) {
-            console.error("DynaQueueHandler, error cleaning the previous session", error);
-        });
+        this._callsQueue = new dyna_job_queue_1.DynaJobQueue({ parallels: 1 });
+        this._jobsQueue = new dyna_job_queue_1.DynaJobQueue({ parallels: this._config.parallels });
+        this._callsQueue.addJobPromised(function () { return _this._initialize(); });
     }
+    DynaQueueHandler.prototype._initialize = function () {
+        return this._memory.delAll()
+            .catch(function (error) {
+            return Promise.reject({
+                code: 1810261314,
+                errorType: dyna_interfaces_1.EErrorType.HW,
+                message: 'DynaQueueHandler, error cleaning the previous session',
+                error: error,
+            });
+        });
+    };
+    DynaQueueHandler.prototype.isNotWorking = function () {
+        var _this = this;
+        if (!this.isWorking)
+            return Promise.resolve();
+        return new Promise(function (resolve) {
+            _this._updateIsNotWorking.push(resolve);
+        });
+    };
     DynaQueueHandler.prototype.addJob = function (data, priority) {
+        if (priority === void 0) { priority = 1; }
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this._callsQueue.addJobPromised(function () {
+                        return _this._addJob(data, priority);
+                    })];
+            });
+        });
+    };
+    DynaQueueHandler.prototype._addJob = function (data, priority) {
         if (priority === void 0) { priority = 1; }
         return __awaiter(this, void 0, void 0, function () {
             var jobId;
@@ -176,7 +207,7 @@ var DynaQueueHandler = /** @class */ (function () {
                         }
                         if (this._hasDiffPriorities)
                             this._sortJobs();
-                        this._queue.addJobCallback(function (done) { return __awaiter(_this, void 0, void 0, function () {
+                        this._jobsQueue.addJobCallback(function (done) { return __awaiter(_this, void 0, void 0, function () {
                             var jobItem, data;
                             var _this = this;
                             return __generator(this, function (_a) {
@@ -191,11 +222,18 @@ var DynaQueueHandler = /** @class */ (function () {
                                         this._isWorking = true;
                                         this._config.onJob(data, function () {
                                             _this._isWorking = false;
-                                            done();
                                             _this._memory.del('data', jobItem.jobId)
                                                 .catch(function (error) {
                                                 console.error("DynaQueueHandler: 1810261313 dyna-disk-memory cannot delete this job id [" + jobItem.jobId + "]\n                This is not a critical error (so far), the app is still running without any problem.\n                This error is occurred when:\n                - There are more than one instances that are using this folder (this is not allowed)\n                - A demon is monitoring and blocking the files (like webpack)\n                - Or, if this happens in production only, the disk has a problem (check the error)", error);
-                                            });
+                                            })
+                                                .then(function () {
+                                                // if no jobs, check if notWorking is called and resolve it/them
+                                                if (_this._jobsQueue.stats.jobs === 0) {
+                                                    while (_this._updateIsNotWorking.length)
+                                                        _this._updateIsNotWorking.shift()();
+                                                }
+                                            })
+                                                .then(done);
                                         });
                                         data = null; // for GC
                                         return [2 /*return*/];
@@ -265,10 +303,16 @@ module.exports = require("dyna-guid");
 /* 4 */
 /***/ (function(module, exports) {
 
-module.exports = require("dyna-job-queue");
+module.exports = require("dyna-interfaces");
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports) {
+
+module.exports = require("dyna-job-queue");
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(0);

@@ -11,14 +11,18 @@ interface IParcel {
 describe('Dyna Queue Handler priority test test', () => {
   const PROCESS_DELAY: number = 100;
   let processed: IParcel[] = [];
-  let queue = new DynaQueueHandler({
-    diskPath: './temp/testDynaQueueHandler-priority-test',
-    onJob: (data: IParcel, done: Function) => {
-      setTimeout(() => {
-        processed.push(data);
-        done();
-      }, PROCESS_DELAY);
-    }
+  let queue: DynaQueueHandler;
+
+  it('should create the queue', () => {
+    queue = new DynaQueueHandler({
+      diskPath: './temp/testDynaQueueHandler-priority-test',
+      onJob: (data: IParcel, done: Function) => {
+        setTimeout(() => {
+          processed.push(data);
+          done();
+        }, PROCESS_DELAY);
+      }
+    });
   });
 
   it('should add 10 jobs with priority 2oo', () => {

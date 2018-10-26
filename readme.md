@@ -43,4 +43,7 @@ _Typescript example_
   queue.addJob<IParcel>({serial: "y"}, 200);        // push something with priority 100 (smaller have priority)
   queue.addJob<IParcel>({serial: "z"}, 2000);       // push something no so urgent
 
+  queue.isNotWorking()
+    .then(() => consol.log('Nothing in the queue'));    // you may shut down safely
+
 ```
