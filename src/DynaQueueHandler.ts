@@ -68,10 +68,13 @@ export class DynaQueueHandler {
       this._config.onJob(data, () => {
         this._isWorking = false;
         done();
-        this._memory.del('data', jobItem.jobId);
+        this._memory.del('data', jobItem.jobId)
+          .catch((error:IError)=>{
+            console.error(`DynaQueueHandler: dyna-disk-memory cannot delete this job id [${jobItem.jobId}]`, error)
+          });
       });
 
-      data = null; // for CG
+      data = null; // for GC
     })
   }
 

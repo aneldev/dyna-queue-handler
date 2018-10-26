@@ -192,9 +192,12 @@ var DynaQueueHandler = /** @class */ (function () {
                                         this._config.onJob(data, function () {
                                             _this._isWorking = false;
                                             done();
-                                            _this._memory.del('data', jobItem.jobId);
+                                            _this._memory.del('data', jobItem.jobId)
+                                                .catch(function (error) {
+                                                console.error("DynaQueueHandler: dyna-disk-memory cannot delete this job it [" + jobItem.jobId + "]", error);
+                                            });
                                         });
-                                        data = null; // for CG
+                                        data = null; // for GC
                                         return [2 /*return*/];
                                 }
                             });
