@@ -92,7 +92,6 @@ export class DynaQueueHandler {
 
       this._isWorking = true;
       this._config.onJob(data, () => {
-        this._isWorking = false;
         this._memory.del('data', jobItem.jobId)
           .catch((error: IError) => {
             console.error(
@@ -110,6 +109,7 @@ export class DynaQueueHandler {
                 this._updateIsNotWorking.shift()();
             }
           })
+          .then(() => this._isWorking = false)
           .then(done);
       });
 
