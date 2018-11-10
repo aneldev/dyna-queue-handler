@@ -27,8 +27,7 @@ describe('Dyna Queue Handler priority test test', () => {
 
   it('should add 10 jobs with priority 2oo', () => {
     forTimes(10, (index: number) => {
-      const serial: number = index;
-      queue.addJob<IParcel>({serial}, 200);
+      queue.addJob<IParcel>({serial: index}, 200);
     });
   });
 

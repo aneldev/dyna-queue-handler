@@ -1,3 +1,3 @@
 import "./utils/mock-jest";
 
-import "./scripts/priority";
+import "./scripts/priority.spec";
