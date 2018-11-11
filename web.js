@@ -87,11 +87,11 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "/dist/";
+/******/ 	__webpack_require__.p = "/";
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/index.ts");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/web.ts");
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -493,6 +493,29 @@ exports.DynaQueueHandler = DynaQueueHandler_1.DynaQueueHandler;
 
 /***/ }),
 
+/***/ "./src/web.ts":
+/*!********************!*\
+  !*** ./src/web.ts ***!
+  \********************/
+/*! no static exports found */
+/*! all exports used */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function __export(m) {
+  for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+__export(__webpack_require__(/*! ./ */ "./src/index.ts"));
+
+/***/ }),
+
 /***/ "dyna-disk-memory":
 /*!***********************************!*\
   !*** external "dyna-disk-memory" ***!
@@ -543,4 +566,4 @@ module.exports = require("dyna-job-queue");
 
 /******/ });
 });
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=web.js.map
