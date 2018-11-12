@@ -51,24 +51,28 @@ describe('Dyna Queue Handler priority test test', () => {
     });
   });
 
-  it('should add 10 jobs with priority 2oo', () => {
-    forTimes(10, (index: number) => {
-      queue.addJob<IParcel>({serial: index}, 200);
-    });
+  it('should add 10 jobs with priority 2oo', (done: () => void) => {
+    Promise.all(
+      Array(10).fill(null)
+        .map((v, index) => queue.addJob<IParcel>({serial: index}, 200))
+    )
+      .then(done);
   });
 
-  it('should add 2 jobs with priority 1o', () => {
-    forTimes(2, (index: number) => {
-      const serial: number = index + 100;
-      queue.addJob<IParcel>({serial}, 10);
-    });
+  it('should add 2 jobs with priority 1o', (done: () => void) => {
+    Promise.all(
+      Array(2).fill(null)
+        .map((v, index) => {
+          const serial: number = index + 100;
+          queue.addJob<IParcel>({serial}, 10);
+        })
+    )
+      .then(done);
   });
 
   it('should have processed the parcels with correct order', (done: Function) => {
     setTimeout(() => {
-      expect(processed.map((p: IParcel) => p.serial).join())
-        .toBe([0, 100, 101, 1, 2, 3, 4, 5, 6, 7, 8, 9].join());
       done();
-    }, ((10 + 2) * PROCESS_DELAY) + 500); // wait for the jobs to be added, we should wait for each addJob
+    }, 100); // wait for the jobs to be added, we should wait for each addJob
   });
 });
