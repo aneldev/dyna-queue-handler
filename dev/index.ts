@@ -4,4 +4,4 @@ import "./mock-jest";
 
 // import './exampleWithPickJobMethod';  // debug typescript code
 // import './exampleWithOnJobEvent';  // debug typescript code
-import '../tests/scripts/stress'; // debug any test (experimental)
+import '../tests/scripts/priority.spec'; // debug any test (experimental)

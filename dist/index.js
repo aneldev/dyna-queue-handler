@@ -96,6 +96,225 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
+/***/ "./node_modules/process/browser.js":
+/*!*****************************************!*\
+  !*** ./node_modules/process/browser.js ***!
+  \*****************************************/
+/*! no static exports found */
+/*! all exports used */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {}; // cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+  throw new Error('setTimeout has not been defined');
+}
+
+function defaultClearTimeout() {
+  throw new Error('clearTimeout has not been defined');
+}
+
+(function () {
+  try {
+    if (typeof setTimeout === 'function') {
+      cachedSetTimeout = setTimeout;
+    } else {
+      cachedSetTimeout = defaultSetTimout;
+    }
+  } catch (e) {
+    cachedSetTimeout = defaultSetTimout;
+  }
+
+  try {
+    if (typeof clearTimeout === 'function') {
+      cachedClearTimeout = clearTimeout;
+    } else {
+      cachedClearTimeout = defaultClearTimeout;
+    }
+  } catch (e) {
+    cachedClearTimeout = defaultClearTimeout;
+  }
+})();
+
+function runTimeout(fun) {
+  if (cachedSetTimeout === setTimeout) {
+    //normal enviroments in sane situations
+    return setTimeout(fun, 0);
+  } // if setTimeout wasn't available but was latter defined
+
+
+  if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+    cachedSetTimeout = setTimeout;
+    return setTimeout(fun, 0);
+  }
+
+  try {
+    // when when somebody has screwed with setTimeout but no I.E. maddness
+    return cachedSetTimeout(fun, 0);
+  } catch (e) {
+    try {
+      // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+      return cachedSetTimeout.call(null, fun, 0);
+    } catch (e) {
+      // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+      return cachedSetTimeout.call(this, fun, 0);
+    }
+  }
+}
+
+function runClearTimeout(marker) {
+  if (cachedClearTimeout === clearTimeout) {
+    //normal enviroments in sane situations
+    return clearTimeout(marker);
+  } // if clearTimeout wasn't available but was latter defined
+
+
+  if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+    cachedClearTimeout = clearTimeout;
+    return clearTimeout(marker);
+  }
+
+  try {
+    // when when somebody has screwed with setTimeout but no I.E. maddness
+    return cachedClearTimeout(marker);
+  } catch (e) {
+    try {
+      // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+      return cachedClearTimeout.call(null, marker);
+    } catch (e) {
+      // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+      // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+      return cachedClearTimeout.call(this, marker);
+    }
+  }
+}
+
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+  if (!draining || !currentQueue) {
+    return;
+  }
+
+  draining = false;
+
+  if (currentQueue.length) {
+    queue = currentQueue.concat(queue);
+  } else {
+    queueIndex = -1;
+  }
+
+  if (queue.length) {
+    drainQueue();
+  }
+}
+
+function drainQueue() {
+  if (draining) {
+    return;
+  }
+
+  var timeout = runTimeout(cleanUpNextTick);
+  draining = true;
+  var len = queue.length;
+
+  while (len) {
+    currentQueue = queue;
+    queue = [];
+
+    while (++queueIndex < len) {
+      if (currentQueue) {
+        currentQueue[queueIndex].run();
+      }
+    }
+
+    queueIndex = -1;
+    len = queue.length;
+  }
+
+  currentQueue = null;
+  draining = false;
+  runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+  var args = new Array(arguments.length - 1);
+
+  if (arguments.length > 1) {
+    for (var i = 1; i < arguments.length; i++) {
+      args[i - 1] = arguments[i];
+    }
+  }
+
+  queue.push(new Item(fun, args));
+
+  if (queue.length === 1 && !draining) {
+    runTimeout(drainQueue);
+  }
+}; // v8 likes predictible objects
+
+
+function Item(fun, array) {
+  this.fun = fun;
+  this.array = array;
+}
+
+Item.prototype.run = function () {
+  this.fun.apply(null, this.array);
+};
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) {
+  return [];
+};
+
+process.binding = function (name) {
+  throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () {
+  return '/';
+};
+
+process.chdir = function (dir) {
+  throw new Error('process.chdir is not supported');
+};
+
+process.umask = function () {
+  return 0;
+};
+
+/***/ }),
+
 /***/ "./src/DynaQueueHandler.ts":
 /*!*********************************!*\
   !*** ./src/DynaQueueHandler.ts ***!
@@ -105,7 +324,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(process) {
 
 var __assign = this && this.__assign || Object.assign || function (t) {
   for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -254,17 +473,80 @@ var __generator = this && this.__generator || function (thisArg, body) {
   }
 };
 
+var _this = this;
+
 Object.defineProperty(exports, "__esModule", {
   value: true
-});
-
-var dyna_disk_memory_1 = __webpack_require__(/*! dyna-disk-memory */ "dyna-disk-memory");
+}); // import {DynaDiskMemory}     from "dyna-disk-memory";
 
 var dyna_guid_1 = __webpack_require__(/*! dyna-guid */ "dyna-guid");
 
 var dyna_interfaces_1 = __webpack_require__(/*! dyna-interfaces */ "dyna-interfaces");
 
 var dyna_job_queue_1 = __webpack_require__(/*! dyna-job-queue */ "dyna-job-queue");
+
+var importDynaDiskMemoryModule = function () {
+  return __awaiter(_this, void 0, void 0, function () {
+    var isNode, _a;
+
+    return __generator(this, function (_b) {
+      switch (_b.label) {
+        case 0:
+          isNode = !!(typeof process !== 'undefined' && process.versions && process.versions.node);
+          if (!isNode) return [3
+          /*break*/
+          , 2];
+          return [4
+          /*yield*/
+          , Promise.resolve().then(function () {
+            return __webpack_require__(/*! dyna-disk-memory/node */ "dyna-disk-memory/node");
+          })];
+
+        case 1:
+          _a = _b.sent();
+          return [3
+          /*break*/
+          , 4];
+
+        case 2:
+          return [4
+          /*yield*/
+          , Promise.resolve().then(function () {
+            return __webpack_require__(/*! dyna-disk-memory/web */ "dyna-disk-memory/web");
+          })];
+
+        case 3:
+          _a = _b.sent();
+          _b.label = 4;
+
+        case 4:
+          return [2
+          /*return*/
+          , _a];
+      }
+    });
+  });
+};
+
+var importDynaDiskMemory = function () {
+  return __awaiter(_this, void 0, void 0, function () {
+    var module;
+    return __generator(this, function (_a) {
+      switch (_a.label) {
+        case 0:
+          return [4
+          /*yield*/
+          , importDynaDiskMemoryModule()];
+
+        case 1:
+          module = _a.sent();
+          return [2
+          /*return*/
+          , module.DynaJobQueue];
+      }
+    });
+  });
+};
 
 var DynaQueueHandler =
 /** @class */
@@ -283,9 +565,6 @@ function () {
     this._config = __assign({
       parallels: 1
     }, this._config);
-    this._memory = new dyna_disk_memory_1.DynaDiskMemory({
-      diskPath: this._config.diskPath
-    });
     this._callsQueue = new dyna_job_queue_1.DynaJobQueue({
       parallels: 1
     });
@@ -299,12 +578,50 @@ function () {
   }
 
   DynaQueueHandler.prototype._initialize = function () {
-    return this._memory.delAll().catch(function (error) {
-      return Promise.reject({
-        code: 1810261314,
-        errorType: dyna_interfaces_1.EErrorType.HW,
-        message: 'DynaQueueHandler, error cleaning the previous session',
-        error: error
+    return __awaiter(this, void 0, void 0, function () {
+      var _DynaDiskMemory, error_1;
+
+      return __generator(this, function (_a) {
+        switch (_a.label) {
+          case 0:
+            _a.trys.push([0, 3,, 4]);
+
+            return [4
+            /*yield*/
+            , importDynaDiskMemory()];
+
+          case 1:
+            _DynaDiskMemory = _a.sent();
+            this._memory = new _DynaDiskMemory({
+              diskPath: this._config.diskPath
+            });
+            return [4
+            /*yield*/
+            , this._memory.delAll()];
+
+          case 2:
+            _a.sent();
+
+            return [3
+            /*break*/
+            , 4];
+
+          case 3:
+            error_1 = _a.sent();
+            return [2
+            /*return*/
+            , Promise.reject({
+              code: 1810261314,
+              errorType: dyna_interfaces_1.EErrorType.HW,
+              message: 'DynaQueueHandler, error cleaning the previous session',
+              error: error_1
+            })];
+
+          case 4:
+            return [2
+            /*return*/
+            ];
+        }
       });
     });
   };
@@ -469,6 +786,7 @@ function () {
 }();
 
 exports.DynaQueueHandler = DynaQueueHandler;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node_modules/process/browser.js */ "./node_modules/process/browser.js")))
 
 /***/ }),
 
@@ -493,15 +811,27 @@ exports.DynaQueueHandler = DynaQueueHandler_1.DynaQueueHandler;
 
 /***/ }),
 
-/***/ "dyna-disk-memory":
-/*!***********************************!*\
-  !*** external "dyna-disk-memory" ***!
-  \***********************************/
+/***/ "dyna-disk-memory/node":
+/*!****************************************!*\
+  !*** external "dyna-disk-memory/node" ***!
+  \****************************************/
 /*! no static exports found */
 /*! all exports used */
 /***/ (function(module, exports) {
 
-module.exports = require("dyna-disk-memory");
+module.exports = require("dyna-disk-memory/node");
+
+/***/ }),
+
+/***/ "dyna-disk-memory/web":
+/*!***************************************!*\
+  !*** external "dyna-disk-memory/web" ***!
+  \***************************************/
+/*! no static exports found */
+/*! all exports used */
+/***/ (function(module, exports) {
+
+module.exports = require("dyna-disk-memory/web");
 
 /***/ }),
 

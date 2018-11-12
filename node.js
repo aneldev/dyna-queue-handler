@@ -254,17 +254,80 @@ var __generator = this && this.__generator || function (thisArg, body) {
   }
 };
 
+var _this = this;
+
 Object.defineProperty(exports, "__esModule", {
   value: true
-});
-
-var dyna_disk_memory_1 = __webpack_require__(/*! dyna-disk-memory */ "dyna-disk-memory");
+}); // import {DynaDiskMemory}     from "dyna-disk-memory";
 
 var dyna_guid_1 = __webpack_require__(/*! dyna-guid */ "dyna-guid");
 
 var dyna_interfaces_1 = __webpack_require__(/*! dyna-interfaces */ "dyna-interfaces");
 
 var dyna_job_queue_1 = __webpack_require__(/*! dyna-job-queue */ "dyna-job-queue");
+
+var importDynaDiskMemoryModule = function () {
+  return __awaiter(_this, void 0, void 0, function () {
+    var isNode, _a;
+
+    return __generator(this, function (_b) {
+      switch (_b.label) {
+        case 0:
+          isNode = !!(typeof process !== 'undefined' && process.versions && process.versions.node);
+          if (!isNode) return [3
+          /*break*/
+          , 2];
+          return [4
+          /*yield*/
+          , Promise.resolve().then(function () {
+            return __webpack_require__(/*! dyna-disk-memory/node */ "dyna-disk-memory/node");
+          })];
+
+        case 1:
+          _a = _b.sent();
+          return [3
+          /*break*/
+          , 4];
+
+        case 2:
+          return [4
+          /*yield*/
+          , Promise.resolve().then(function () {
+            return __webpack_require__(/*! dyna-disk-memory/web */ "dyna-disk-memory/web");
+          })];
+
+        case 3:
+          _a = _b.sent();
+          _b.label = 4;
+
+        case 4:
+          return [2
+          /*return*/
+          , _a];
+      }
+    });
+  });
+};
+
+var importDynaDiskMemory = function () {
+  return __awaiter(_this, void 0, void 0, function () {
+    var module;
+    return __generator(this, function (_a) {
+      switch (_a.label) {
+        case 0:
+          return [4
+          /*yield*/
+          , importDynaDiskMemoryModule()];
+
+        case 1:
+          module = _a.sent();
+          return [2
+          /*return*/
+          , module.DynaJobQueue];
+      }
+    });
+  });
+};
 
 var DynaQueueHandler =
 /** @class */
@@ -283,9 +346,6 @@ function () {
     this._config = __assign({
       parallels: 1
     }, this._config);
-    this._memory = new dyna_disk_memory_1.DynaDiskMemory({
-      diskPath: this._config.diskPath
-    });
     this._callsQueue = new dyna_job_queue_1.DynaJobQueue({
       parallels: 1
     });
@@ -299,12 +359,50 @@ function () {
   }
 
   DynaQueueHandler.prototype._initialize = function () {
-    return this._memory.delAll().catch(function (error) {
-      return Promise.reject({
-        code: 1810261314,
-        errorType: dyna_interfaces_1.EErrorType.HW,
-        message: 'DynaQueueHandler, error cleaning the previous session',
-        error: error
+    return __awaiter(this, void 0, void 0, function () {
+      var _DynaDiskMemory, error_1;
+
+      return __generator(this, function (_a) {
+        switch (_a.label) {
+          case 0:
+            _a.trys.push([0, 3,, 4]);
+
+            return [4
+            /*yield*/
+            , importDynaDiskMemory()];
+
+          case 1:
+            _DynaDiskMemory = _a.sent();
+            this._memory = new _DynaDiskMemory({
+              diskPath: this._config.diskPath
+            });
+            return [4
+            /*yield*/
+            , this._memory.delAll()];
+
+          case 2:
+            _a.sent();
+
+            return [3
+            /*break*/
+            , 4];
+
+          case 3:
+            error_1 = _a.sent();
+            return [2
+            /*return*/
+            , Promise.reject({
+              code: 1810261314,
+              errorType: dyna_interfaces_1.EErrorType.HW,
+              message: 'DynaQueueHandler, error cleaning the previous session',
+              error: error_1
+            })];
+
+          case 4:
+            return [2
+            /*return*/
+            ];
+        }
       });
     });
   };
@@ -516,15 +614,27 @@ __export(__webpack_require__(/*! ./ */ "./src/index.ts"));
 
 /***/ }),
 
-/***/ "dyna-disk-memory":
-/*!***********************************!*\
-  !*** external "dyna-disk-memory" ***!
-  \***********************************/
+/***/ "dyna-disk-memory/node":
+/*!****************************************!*\
+  !*** external "dyna-disk-memory/node" ***!
+  \****************************************/
 /*! no static exports found */
 /*! all exports used */
 /***/ (function(module, exports) {
 
-module.exports = require("dyna-disk-memory");
+module.exports = require("dyna-disk-memory/node");
+
+/***/ }),
+
+/***/ "dyna-disk-memory/web":
+/*!***************************************!*\
+  !*** external "dyna-disk-memory/web" ***!
+  \***************************************/
+/*! no static exports found */
+/*! all exports used */
+/***/ (function(module, exports) {
+
+module.exports = require("dyna-disk-memory/web");
 
 /***/ }),
 
