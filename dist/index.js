@@ -477,7 +477,7 @@ var _this = this;
 
 Object.defineProperty(exports, "__esModule", {
   value: true
-}); // import {DynaDiskMemory}     from "dyna-disk-memory";
+});
 
 var dyna_guid_1 = __webpack_require__(/*! dyna-guid */ "dyna-guid");
 
@@ -485,7 +485,7 @@ var dyna_interfaces_1 = __webpack_require__(/*! dyna-interfaces */ "dyna-interfa
 
 var dyna_job_queue_1 = __webpack_require__(/*! dyna-job-queue */ "dyna-job-queue");
 
-var importDynaDiskMemoryModule = function () {
+var importDynaDiskMemory = function () {
   return __awaiter(_this, void 0, void 0, function () {
     var isNode, _a;
 
@@ -528,21 +528,25 @@ var importDynaDiskMemoryModule = function () {
   });
 };
 
-var importDynaDiskMemory = function () {
+var importFrom = function (importModule, exportName) {
   return __awaiter(_this, void 0, void 0, function () {
-    var module;
+    var module, output;
     return __generator(this, function (_a) {
       switch (_a.label) {
         case 0:
           return [4
           /*yield*/
-          , importDynaDiskMemoryModule()];
+          , importModule()];
 
         case 1:
           module = _a.sent();
+          output = module[exportName];
+          if (!output) console.error("internal error: cannot get the export member [" + exportName + "]", {
+            module: module
+          });
           return [2
           /*return*/
-          , module.DynaJobQueue];
+          , output];
       }
     });
   });
@@ -588,7 +592,7 @@ function () {
 
             return [4
             /*yield*/
-            , importDynaDiskMemory()];
+            , importFrom(importDynaDiskMemory, "DynaDiskMemory")];
 
           case 1:
             _DynaDiskMemory = _a.sent();
