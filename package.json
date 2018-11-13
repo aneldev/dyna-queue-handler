@@ -35,7 +35,7 @@
     "build": "rimraf ./dist/ && npm run .build-index.d.ts && npm run .build-dist",
     ".build-index.d.ts": "tsc && npm run .build-index.d.ts-clear",
     ".build-index.d.ts-clear": "cd dist/ && find . -name \\*.js -delete && cd .. && rimraf temp",
-    ".build-dist": "set NODE_ENV=development && webpack --config webpack.dist.config.js && webpack --config webpack.dist.node.config.js && webpack --config webpack.dist.web.config.js",
+    ".build-dist": "set NODE_ENV=development && webpack --config webpack.dist.config.js",
     "release": "npm run build && npm run publish-push",
     "test": "jest --coverage --no-cache --runInBand",
     "test-only": "jest --coverage --verbose --no-cache --runInBand",
