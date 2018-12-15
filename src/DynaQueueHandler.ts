@@ -1,21 +1,8 @@
-import {DynaDiskMemory}     from "dyna-disk-memory";
-import {guid}               from "dyna-guid";
+import {DynaDiskMemory} from "dyna-disk-memory";
+import {guid} from "dyna-guid";
 import {EErrorType, IError} from "dyna-interfaces";
-import {DynaJobQueue}       from "dyna-job-queue";
-
-const importDynaDiskMemory = async (): Promise<any> => {
-  const isNode = !!(typeof process !== 'undefined' && process.versions && process.versions.node);
-  return isNode
-    ? await import("dyna-disk-memory/node")
-    : await import("dyna-disk-memory/web");
-};
-
-const importFrom = async <TExportMember>(importModule: () => Promise<any>, exportName: string): Promise<TExportMember> => {
-  const module = await importModule();
-  const output = module[exportName];
-  if (!output) console.error(`internal error: cannot get the export member [${exportName}]`, {module});
-  return output;
-};
+import {DynaJobQueue} from "dyna-job-queue";
+import {importUniversal} from "../dyna/universalImport";
 
 export interface IDynaQueueHandlerConfig<TData> {
   diskPath: string;
@@ -40,8 +27,12 @@ export class DynaQueueHandler {
       ...this._config,
     };
 
-    this._callsQueue = new DynaJobQueue({parallels: 1});
-    this._jobsQueue = new DynaJobQueue({parallels: this._config.parallels});
+    const _DynaJobQueue = importUniversal<typeof DynaJobQueue>( "DynaJobQueue");
+    this._callsQueue = new _DynaJobQueue({parallels: 1});
+    this._jobsQueue = new _DynaJobQueue({parallels: this._config.parallels});
+
+    const _DynaDiskMemory = importUniversal<typeof DynaDiskMemory>( "DynaDiskMemory");
+    this._memory = new _DynaDiskMemory({diskPath: this._config.diskPath});
 
     this._callsQueue.addJobPromised(() => this._initialize());
   }
@@ -56,8 +47,6 @@ export class DynaQueueHandler {
 
   private async _initialize(): Promise<void> {
     try {
-      const _DynaDiskMemory = await importFrom<typeof DynaDiskMemory>(importDynaDiskMemory, "DynaDiskMemory");
-      this._memory = new _DynaDiskMemory({diskPath: this._config.diskPath});
       await this._memory.delAll();
     } catch (error) {
       return Promise.reject({

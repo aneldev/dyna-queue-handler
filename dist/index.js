@@ -96,6 +96,33 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
+/***/ "./dyna/universalImport.ts":
+/*!*********************************!*\
+  !*** ./dyna/universalImport.ts ***!
+  \*********************************/
+/*! no static exports found */
+/*! all exports used */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.importUniversal = function (moduleName) {
+  var universalImports = process && process.universalImports || window && window.universalImports;
+
+  if (!universalImports) {
+    console.error('importUniversal error: `universalImports` are not defined in `process` or in `window`');
+  }
+
+  return universalImports[moduleName];
+};
+
+/***/ }),
+
 /***/ "./src/DynaQueueHandler.ts":
 /*!*********************************!*\
   !*** ./src/DynaQueueHandler.ts ***!
@@ -254,8 +281,6 @@ var __generator = this && this.__generator || function (thisArg, body) {
   }
 };
 
-var _this = this;
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -264,74 +289,7 @@ var dyna_guid_1 = __webpack_require__(/*! dyna-guid */ "dyna-guid");
 
 var dyna_interfaces_1 = __webpack_require__(/*! dyna-interfaces */ "dyna-interfaces");
 
-var dyna_job_queue_1 = __webpack_require__(/*! dyna-job-queue */ "dyna-job-queue");
-
-var importDynaDiskMemory = function () {
-  return __awaiter(_this, void 0, void 0, function () {
-    var isNode, _a;
-
-    return __generator(this, function (_b) {
-      switch (_b.label) {
-        case 0:
-          isNode = !!(typeof process !== 'undefined' && process.versions && process.versions.node);
-          if (!isNode) return [3
-          /*break*/
-          , 2];
-          return [4
-          /*yield*/
-          , Promise.resolve().then(function () {
-            return __webpack_require__(/*! dyna-disk-memory/node */ "dyna-disk-memory/node");
-          })];
-
-        case 1:
-          _a = _b.sent();
-          return [3
-          /*break*/
-          , 4];
-
-        case 2:
-          return [4
-          /*yield*/
-          , Promise.resolve().then(function () {
-            return __webpack_require__(/*! dyna-disk-memory/web */ "dyna-disk-memory/web");
-          })];
-
-        case 3:
-          _a = _b.sent();
-          _b.label = 4;
-
-        case 4:
-          return [2
-          /*return*/
-          , _a];
-      }
-    });
-  });
-};
-
-var importFrom = function (importModule, exportName) {
-  return __awaiter(_this, void 0, void 0, function () {
-    var module, output;
-    return __generator(this, function (_a) {
-      switch (_a.label) {
-        case 0:
-          return [4
-          /*yield*/
-          , importModule()];
-
-        case 1:
-          module = _a.sent();
-          output = module[exportName];
-          if (!output) console.error("internal error: cannot get the export member [" + exportName + "]", {
-            module: module
-          });
-          return [2
-          /*return*/
-          , output];
-      }
-    });
-  });
-};
+var universalImport_1 = __webpack_require__(/*! ../dyna/universalImport */ "./dyna/universalImport.ts");
 
 var DynaQueueHandler =
 /** @class */
@@ -350,11 +308,20 @@ function () {
     this._config = __assign({
       parallels: 1
     }, this._config);
-    this._callsQueue = new dyna_job_queue_1.DynaJobQueue({
+
+    var _DynaJobQueue = universalImport_1.importUniversal("DynaJobQueue");
+
+    this._callsQueue = new _DynaJobQueue({
       parallels: 1
     });
-    this._jobsQueue = new dyna_job_queue_1.DynaJobQueue({
+    this._jobsQueue = new _DynaJobQueue({
       parallels: this._config.parallels
+    });
+
+    var _DynaDiskMemory = universalImport_1.importUniversal("DynaDiskMemory");
+
+    this._memory = new _DynaDiskMemory({
+      diskPath: this._config.diskPath
     });
 
     this._callsQueue.addJobPromised(function () {
@@ -364,34 +331,24 @@ function () {
 
   DynaQueueHandler.prototype._initialize = function () {
     return __awaiter(this, void 0, void 0, function () {
-      var _DynaDiskMemory, error_1;
-
+      var error_1;
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 3,, 4]);
+            _a.trys.push([0, 2,, 3]);
 
-            return [4
-            /*yield*/
-            , importFrom(importDynaDiskMemory, "DynaDiskMemory")];
-
-          case 1:
-            _DynaDiskMemory = _a.sent();
-            this._memory = new _DynaDiskMemory({
-              diskPath: this._config.diskPath
-            });
             return [4
             /*yield*/
             , this._memory.delAll()];
 
-          case 2:
+          case 1:
             _a.sent();
 
             return [3
             /*break*/
-            , 4];
+            , 3];
 
-          case 3:
+          case 2:
             error_1 = _a.sent();
             return [2
             /*return*/
@@ -402,7 +359,7 @@ function () {
               error: error_1
             })];
 
-          case 4:
+          case 3:
             return [2
             /*return*/
             ];
@@ -592,30 +549,7 @@ Object.defineProperty(exports, "__esModule", {
 var DynaQueueHandler_1 = __webpack_require__(/*! ./DynaQueueHandler */ "./src/DynaQueueHandler.ts");
 
 exports.DynaQueueHandler = DynaQueueHandler_1.DynaQueueHandler;
-
-/***/ }),
-
-/***/ "dyna-disk-memory/node":
-/*!****************************************!*\
-  !*** external "dyna-disk-memory/node" ***!
-  \****************************************/
-/*! no static exports found */
-/*! all exports used */
-/***/ (function(module, exports) {
-
-module.exports = require("dyna-disk-memory/node");
-
-/***/ }),
-
-/***/ "dyna-disk-memory/web":
-/*!***************************************!*\
-  !*** external "dyna-disk-memory/web" ***!
-  \***************************************/
-/*! no static exports found */
-/*! all exports used */
-/***/ (function(module, exports) {
-
-module.exports = require("dyna-disk-memory/web");
+console.error("\ndyna-queue-handler: Import error\n    You should import \"dyna-queue-handler/web\" or \"dyna-queue-handler/node\" (with lazy  or not) according the runtime environment.\n    For typescript, you should import the types from \"dyna-queue-handler\" but functional code from web or node versions.\n    More for how to import with conditional lazy load: https://github.com/aneldev/dyna-ts-module-boilerplate#how-to-import\n");
 
 /***/ }),
 
@@ -640,18 +574,6 @@ module.exports = require("dyna-guid");
 /***/ (function(module, exports) {
 
 module.exports = require("dyna-interfaces");
-
-/***/ }),
-
-/***/ "dyna-job-queue":
-/*!*********************************!*\
-  !*** external "dyna-job-queue" ***!
-  \*********************************/
-/*! no static exports found */
-/*! all exports used */
-/***/ (function(module, exports) {
-
-module.exports = require("dyna-job-queue");
 
 /***/ })
 
