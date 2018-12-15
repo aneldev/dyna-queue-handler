@@ -29,7 +29,7 @@ describe('Dyna Queue Handler priority test test', () => {
       Array(10).fill(null)
         .map((v, index) => queue.addJob<IParcel>({serial: index}, 200))
     )
-      .then(done);
+      .then(() => done());
   });
 
   it('should add 2 jobs with priority 1o', (done: () => void) => {
@@ -40,7 +40,7 @@ describe('Dyna Queue Handler priority test test', () => {
           queue.addJob<IParcel>({serial}, 10);
         })
     )
-      .then(done);
+      .then(() => done());
   });
 
   it('should have processed the parcels with correct order', (done: Function) => {
