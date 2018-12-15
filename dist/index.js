@@ -107,6 +107,16 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 
 
+var __assign = this && this.__assign || Object.assign || function (t) {
+  for (var s, i = 1, n = arguments.length; i < n; i++) {
+    s = arguments[i];
+
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+  }
+
+  return t;
+};
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -115,10 +125,24 @@ exports.importUniversal = function (moduleName) {
   var universalImports = process && process.universalImports || window && window.universalImports;
 
   if (!universalImports) {
-    console.error('importUniversal error: `universalImports` are not defined in `process` or in `window`');
+    console.error("importUniversal error: no exports found, user exportUniversalToNode/exportUniversalToWeb to export universal modules");
+  }
+
+  var runningEnvironment = process && process.universalImports ? "node" : "web";
+
+  if (!universalImports[moduleName]) {
+    console.error("importUniversal error: module [" + moduleName + "] not found, seems that is not exported for running Environment [" + runningEnvironment + "]");
   }
 
   return universalImports[moduleName];
+};
+
+exports.exportNode = function (modules) {
+  process.universalImports = __assign({}, process.universalImports || {}, modules);
+};
+
+exports.exportWeb = function (modules) {
+  window.universalImports = __assign({}, window.universalImports || {}, modules);
 };
 
 /***/ }),
