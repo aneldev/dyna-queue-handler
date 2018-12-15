@@ -59,7 +59,7 @@
     "dyna-disk-memory": "^2.0.10",
     "dyna-guid": "^1.0.8",
     "dyna-interfaces": "^4.0.6",
-    "dyna-job-queue": "^2.0.4"
+    "dyna-job-queue": "^3.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
