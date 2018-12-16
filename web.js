@@ -96,6 +96,58 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
+/***/ "./dyna/universalImport.ts":
+/*!*********************************!*\
+  !*** ./dyna/universalImport.ts ***!
+  \*********************************/
+/*! no static exports found */
+/*! all exports used */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+var __assign = this && this.__assign || Object.assign || function (t) {
+  for (var s, i = 1, n = arguments.length; i < n; i++) {
+    s = arguments[i];
+
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+  }
+
+  return t;
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.importUniversal = function (moduleName) {
+  var universalImports = process && process.universalImports || window && window.universalImports;
+
+  if (!universalImports) {
+    console.error("importUniversal error: no exports found, user exportUniversalToNode/exportUniversalToWeb to export universal modules");
+  }
+
+  var runningEnvironment = process && process.universalImports ? "node" : "web";
+
+  if (!universalImports[moduleName]) {
+    console.error("importUniversal error: module [" + moduleName + "] not found, seems that is not exported for running Environment [" + runningEnvironment + "]");
+  }
+
+  return universalImports[moduleName];
+};
+
+exports.exportNode = function (modules) {
+  process.universalImports = __assign({}, process.universalImports || {}, modules);
+};
+
+exports.exportWeb = function (modules) {
+  window.universalImports = __assign({}, window.universalImports || {}, modules);
+};
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node_modules/process/browser.js */ "./node_modules/process/browser.js")))
+
+/***/ }),
+
 /***/ "./node_modules/process/browser.js":
 /*!*****************************************!*\
   !*** ./node_modules/process/browser.js ***!
@@ -324,7 +376,7 @@ process.umask = function () {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
+
 
 var __assign = this && this.__assign || Object.assign || function (t) {
   for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -473,8 +525,6 @@ var __generator = this && this.__generator || function (thisArg, body) {
   }
 };
 
-var _this = this;
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -483,74 +533,7 @@ var dyna_guid_1 = __webpack_require__(/*! dyna-guid */ "dyna-guid");
 
 var dyna_interfaces_1 = __webpack_require__(/*! dyna-interfaces */ "dyna-interfaces");
 
-var dyna_job_queue_1 = __webpack_require__(/*! dyna-job-queue */ "dyna-job-queue");
-
-var importDynaDiskMemory = function () {
-  return __awaiter(_this, void 0, void 0, function () {
-    var isNode, _a;
-
-    return __generator(this, function (_b) {
-      switch (_b.label) {
-        case 0:
-          isNode = !!(typeof process !== 'undefined' && process.versions && process.versions.node);
-          if (!isNode) return [3
-          /*break*/
-          , 2];
-          return [4
-          /*yield*/
-          , Promise.resolve().then(function () {
-            return __webpack_require__(/*! dyna-disk-memory/node */ "dyna-disk-memory/node");
-          })];
-
-        case 1:
-          _a = _b.sent();
-          return [3
-          /*break*/
-          , 4];
-
-        case 2:
-          return [4
-          /*yield*/
-          , Promise.resolve().then(function () {
-            return __webpack_require__(/*! dyna-disk-memory/web */ "dyna-disk-memory/web");
-          })];
-
-        case 3:
-          _a = _b.sent();
-          _b.label = 4;
-
-        case 4:
-          return [2
-          /*return*/
-          , _a];
-      }
-    });
-  });
-};
-
-var importFrom = function (importModule, exportName) {
-  return __awaiter(_this, void 0, void 0, function () {
-    var module, output;
-    return __generator(this, function (_a) {
-      switch (_a.label) {
-        case 0:
-          return [4
-          /*yield*/
-          , importModule()];
-
-        case 1:
-          module = _a.sent();
-          output = module[exportName];
-          if (!output) console.error("internal error: cannot get the export member [" + exportName + "]", {
-            module: module
-          });
-          return [2
-          /*return*/
-          , output];
-      }
-    });
-  });
-};
+var universalImport_1 = __webpack_require__(/*! ../dyna/universalImport */ "./dyna/universalImport.ts");
 
 var DynaQueueHandler =
 /** @class */
@@ -569,11 +552,20 @@ function () {
     this._config = __assign({
       parallels: 1
     }, this._config);
-    this._callsQueue = new dyna_job_queue_1.DynaJobQueue({
+
+    var _DynaJobQueue = universalImport_1.importUniversal("DynaJobQueue");
+
+    this._callsQueue = new _DynaJobQueue({
       parallels: 1
     });
-    this._jobsQueue = new dyna_job_queue_1.DynaJobQueue({
+    this._jobsQueue = new _DynaJobQueue({
       parallels: this._config.parallels
+    });
+
+    var _DynaDiskMemory = universalImport_1.importUniversal("DynaDiskMemory");
+
+    this._memory = new _DynaDiskMemory({
+      diskPath: this._config.diskPath
     });
 
     this._callsQueue.addJobPromised(function () {
@@ -583,34 +575,24 @@ function () {
 
   DynaQueueHandler.prototype._initialize = function () {
     return __awaiter(this, void 0, void 0, function () {
-      var _DynaDiskMemory, error_1;
-
+      var error_1;
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 3,, 4]);
+            _a.trys.push([0, 2,, 3]);
 
-            return [4
-            /*yield*/
-            , importFrom(importDynaDiskMemory, "DynaDiskMemory")];
-
-          case 1:
-            _DynaDiskMemory = _a.sent();
-            this._memory = new _DynaDiskMemory({
-              diskPath: this._config.diskPath
-            });
             return [4
             /*yield*/
             , this._memory.delAll()];
 
-          case 2:
+          case 1:
             _a.sent();
 
             return [3
             /*break*/
-            , 4];
+            , 3];
 
-          case 3:
+          case 2:
             error_1 = _a.sent();
             return [2
             /*return*/
@@ -621,7 +603,7 @@ function () {
               error: error_1
             })];
 
-          case 4:
+          case 3:
             return [2
             /*return*/
             ];
@@ -790,28 +772,6 @@ function () {
 }();
 
 exports.DynaQueueHandler = DynaQueueHandler;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node_modules/process/browser.js */ "./node_modules/process/browser.js")))
-
-/***/ }),
-
-/***/ "./src/index.ts":
-/*!**********************!*\
-  !*** ./src/index.ts ***!
-  \**********************/
-/*! no static exports found */
-/*! all exports used */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var DynaQueueHandler_1 = __webpack_require__(/*! ./DynaQueueHandler */ "./src/DynaQueueHandler.ts");
-
-exports.DynaQueueHandler = DynaQueueHandler_1.DynaQueueHandler;
 
 /***/ }),
 
@@ -826,27 +786,24 @@ exports.DynaQueueHandler = DynaQueueHandler_1.DynaQueueHandler;
 "use strict";
 
 
-function __export(m) {
-  for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-__export(__webpack_require__(/*! ./ */ "./src/index.ts"));
+var web_1 = __webpack_require__(/*! dyna-job-queue/web */ "dyna-job-queue/web");
 
-/***/ }),
+var web_2 = __webpack_require__(/*! dyna-disk-memory/web */ "dyna-disk-memory/web");
 
-/***/ "dyna-disk-memory/node":
-/*!****************************************!*\
-  !*** external "dyna-disk-memory/node" ***!
-  \****************************************/
-/*! no static exports found */
-/*! all exports used */
-/***/ (function(module, exports) {
+var universalImport_1 = __webpack_require__(/*! ../dyna/universalImport */ "./dyna/universalImport.ts");
 
-module.exports = require("dyna-disk-memory/node");
+universalImport_1.exportWeb({
+  DynaJobQueue: web_1.DynaJobQueue,
+  DynaDiskMemory: web_2.DynaDiskMemory
+});
+
+var DynaQueueHandler_1 = __webpack_require__(/*! ./DynaQueueHandler */ "./src/DynaQueueHandler.ts");
+
+exports.DynaQueueHandler = DynaQueueHandler_1.DynaQueueHandler;
 
 /***/ }),
 
@@ -886,15 +843,15 @@ module.exports = require("dyna-interfaces");
 
 /***/ }),
 
-/***/ "dyna-job-queue":
-/*!*********************************!*\
-  !*** external "dyna-job-queue" ***!
-  \*********************************/
+/***/ "dyna-job-queue/web":
+/*!*************************************!*\
+  !*** external "dyna-job-queue/web" ***!
+  \*************************************/
 /*! no static exports found */
 /*! all exports used */
 /***/ (function(module, exports) {
 
-module.exports = require("dyna-job-queue");
+module.exports = require("dyna-job-queue/web");
 
 /***/ })
 
