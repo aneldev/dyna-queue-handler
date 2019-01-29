@@ -1,8 +1,8 @@
-import {DynaDiskMemory} from "dyna-disk-memory";
+import {IDynaDiskMemory} from "dyna-disk-memory/src/interfaces";
 import {guid} from "dyna-guid";
 import {EErrorType, IError} from "dyna-interfaces";
 import {DynaJobQueue} from "dyna-job-queue";
-import {importUniversal} from "../dyna/universalImport";
+import {isNode} from "./isNode";
 
 export interface IDynaQueueHandlerConfig<TData> {
   diskPath: string;
@@ -27,19 +27,15 @@ export class DynaQueueHandler {
       ...this._config,
     };
 
-    const _DynaJobQueue = importUniversal<typeof DynaJobQueue>( "DynaJobQueue");
-    this._callsQueue = new _DynaJobQueue({parallels: 1});
-    this._jobsQueue = new _DynaJobQueue({parallels: this._config.parallels});
-
-    const _DynaDiskMemory = importUniversal<typeof DynaDiskMemory>( "DynaDiskMemory");
-    this._memory = new _DynaDiskMemory({diskPath: this._config.diskPath});
+    this._callsQueue = new DynaJobQueue({parallels: 1});
+    this._jobsQueue = new DynaJobQueue({parallels: this._config.parallels});
 
     this._callsQueue.addJobPromised(() => this._initialize());
   }
 
   private _jobsQueue: DynaJobQueue;
   private _callsQueue: DynaJobQueue;
-  private _memory: DynaDiskMemory;
+  private _memory: IDynaDiskMemory;
   private _jobIndex: IJobIndex = {jobs: []};
   private _hasDiffPriorities: boolean = false;
   private _isWorking: boolean = false;
@@ -47,6 +43,13 @@ export class DynaQueueHandler {
 
   private async _initialize(): Promise<void> {
     try {
+      let _DynaDiskMemory;
+      if (isNode) {
+        _DynaDiskMemory = (await import("dyna-disk-memory/dist/commonJs/node")).DynaDiskMemory;
+      } else {
+        _DynaDiskMemory = (await import("dyna-disk-memory/dist/commonJs/web")).DynaDiskMemory;
+      }
+      this._memory = new _DynaDiskMemory({diskPath: this._config.diskPath});
       await this._memory.delAll();
     } catch (error) {
       return Promise.reject({
@@ -54,7 +57,7 @@ export class DynaQueueHandler {
         errorType: EErrorType.HW,
         message: 'DynaQueueHandler, error cleaning the previous session',
         error,
-      }as IError)
+      } as IError)
     }
   }
 
@@ -76,7 +79,7 @@ export class DynaQueueHandler {
   private async _addJob<TData>(data: TData, priority: number = 1): Promise<void> {
     const jobId: string = guid(1);
     await this._memory.set('data', jobId, data);
-    data = null; // for GC
+    data = null as any; // for GC
 
     this._jobIndex.jobs.push({jobId, priority, order: this._order++});
 
@@ -91,7 +94,11 @@ export class DynaQueueHandler {
     if (this._hasDiffPriorities) this._sortJobs();
 
     this._jobsQueue.addJobCallback(async (done: () => void) => {
-      const jobItem: IJobItem = this._jobIndex.jobs.shift();
+      const jobItem: IJobItem | undefined = this._jobIndex.jobs.shift();
+      if (!jobItem) { // this is not possible, is only for TS
+        done();
+        return;
+      }
       if (this._jobIndex.jobs.length === 0) this._hasDiffPriorities = false;
       let data: TData = await this._memory.get<TData>('data', jobItem.jobId);
 
@@ -110,15 +117,17 @@ export class DynaQueueHandler {
           .then(() => {
             // if no jobs, check if notWorking is called and resolve it/them
             if (this._jobsQueue.stats.jobs === 0) {
-              while (this._updateIsNotWorking.length)
+              while (this._updateIsNotWorking.length) {
+                // @ts-ignore
                 this._updateIsNotWorking.shift()();
+              }
             }
           })
           .then(() => this._isWorking = false)
           .then(done);
       });
 
-      data = null; // for GC
+      data = null as any; // for GC
     })
   }
 
