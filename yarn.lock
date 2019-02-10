@@ -2941,9 +2941,9 @@ dyna-interfaces@^4.0.0, dyna-interfaces@^4.0.6:
   integrity sha512-qCANoLNujUPuiVJ3Tu7t3J+x86kr2xFwO942lACfPl+ydLCVc3nZvavh0xRAQ5652NLjo9COte7GNlwL/+kyfA==
 
 dyna-job-queue@^3.0.0:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/dyna-job-queue/-/dyna-job-queue-3.0.3.tgz#3081d0f25720b3bb457beca46b45396d043eae33"
-  integrity sha512-urfx2hFOsbG4y77MIU+PkxQ2PNym5kP6RduxADMneUsGwewctq/E/p1w6JMazrNbM6pxRztZ7DxXiXVqhK4YKQ==
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/dyna-job-queue/-/dyna-job-queue-3.1.1.tgz#0597c7621e0aefa1ef8449b036c87dd40bd68a4d"
+  integrity sha512-9I8yuW06i367EWpKjc27KgAXPRQ5uK9UmLQ32cis10tb3q87Ls3xMbzyXwPdit5Ey6ktlU8ryeWmNHGVADv7OA==
 
 dyna-loops@^1.7.2:
   version "1.7.2"
