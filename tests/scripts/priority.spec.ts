@@ -1,4 +1,5 @@
 import {DynaQueueHandler} from "../../src";
+import {delay} from "../../src/utils/delay";
 
 declare let jasmine: any, describe: any, expect: any, it: any;
 if (typeof jasmine !== 'undefined') jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
@@ -7,21 +8,21 @@ interface IParcel {
   serial: number;
 }
 
-describe('Dyna Queue Handler priority test test', () => {
+describe('Dyna Queue Handler priority test', () => {
   const PROCESS_DELAY: number = 100;
-  let processed: IParcel[] = [];
+  const processed: IParcel[] = [];
   let queue: DynaQueueHandler;
 
-  it('should create the queue', () => {
+  it('should create the queue', (done: Function) => {
     queue = new DynaQueueHandler({
       diskPath: './temp/testDynaQueueHandler-priority-test',
-      onJob: (data: IParcel, done: Function) => {
-        setTimeout(() => {
-          processed.push(data);
-          done();
-        }, PROCESS_DELAY);
+      onJob: async (data: IParcel) => {
+        processed.push(data);
+        await delay(PROCESS_DELAY);
       }
     });
+    queue.init()
+      .then(() => done());
   });
 
   it('should add 10 jobs with priority 2oo', (done: () => void) => {
@@ -43,8 +44,19 @@ describe('Dyna Queue Handler priority test test', () => {
       .then(() => done());
   });
 
+  it('waits will all jobs are done', (done: Function) => {
+    queue.isNotWorking()
+      .then(() => done())
+  });
+
   it('should have processed the parcels with correct order', (done: Function) => {
     setTimeout(() => {
+      expect(
+        processed
+          .map((p: IParcel) => p.serial)
+          .join()
+      )
+        .toBe([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 100, 101].join());
       done();
     }, 100); // wait for the jobs to be added, we should wait for each addJob
   });

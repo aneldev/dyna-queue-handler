@@ -1,25 +1,23 @@
 export interface IDynaQueueHandlerConfig<TData> {
     diskPath: string;
     parallels?: number;
-    onJob: (data: TData, done: () => void) => void;
+    onJob: (data: TData) => Promise<void>;
 }
 export declare class DynaQueueHandler {
-    private _config;
+    private readonly _config;
     constructor(_config: IDynaQueueHandlerConfig<any>);
-    private _jobsQueue;
-    private _callsQueue;
+    private _initialized;
+    private _queue;
     private _memory;
-    private _jobIndex;
-    private _hasDiffPriorities;
     private _isWorking;
-    private _order;
-    private _initialize;
-    private _updateIsNotWorking;
+    private _jobIndex;
+    private _jobs;
+    private _debugReady;
+    init(): Promise<void>;
     isNotWorking(): Promise<void>;
     addJob<TData>(data: TData, priority?: number): Promise<void>;
-    private _addJob;
+    private _processQueuedItem;
     readonly hasJobs: boolean;
     readonly jobsCount: number;
     readonly isWorking: boolean;
-    private _sortJobs;
 }

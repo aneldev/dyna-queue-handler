@@ -2920,10 +2920,10 @@ dyna-debounce@^2.0.1:
   dependencies:
     lodash.debounce "^4.0.8"
 
-dyna-disk-memory@^3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/dyna-disk-memory/-/dyna-disk-memory-3.0.1.tgz#2df4db5e405793caa176ea7b218e22db014fb529"
-  integrity sha512-fmLvZu4xfz3ALpsaSsbH69uUr1QpWJ+amkaZwHGAXM5RymGa2x+ithXh5T17qcLzci1iTrT9WYAGjULe4Dm4pw==
+dyna-disk-memory@^4.0.0:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/dyna-disk-memory/-/dyna-disk-memory-4.0.2.tgz#9aa104dc19eea3a7567268173aa87fbe95411cf7"
+  integrity sha512-AumnTpeYGs62HhehP9nPTml5AOO21zdpNm2FlA52dmy/R4fBO5HqcZ3y/kMuRCr8cptRbQth4BGVt/JsTl0coQ==
   dependencies:
     dyna-job-queue "^3.0.0"
     dyna-node-fs "^1.0.2"

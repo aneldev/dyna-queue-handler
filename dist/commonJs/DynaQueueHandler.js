@@ -52,175 +52,167 @@ var dyna_job_queue_1 = require("dyna-job-queue");
 var isNode_1 = require("./isNode");
 var DynaQueueHandler = /** @class */ (function () {
     function DynaQueueHandler(_config) {
-        var _this = this;
         this._config = _config;
-        this._jobIndex = { jobs: [] };
-        this._hasDiffPriorities = false;
+        this._initialized = false;
         this._isWorking = false;
-        this._order = 0;
-        this._updateIsNotWorking = [];
+        this._jobIndex = 0;
+        this._jobs = [];
+        this._debugReady = false;
         this._config = __assign({ parallels: 1 }, this._config);
-        this._callsQueue = new dyna_job_queue_1.DynaJobQueue({ parallels: 1 });
-        this._jobsQueue = new dyna_job_queue_1.DynaJobQueue({ parallels: this._config.parallels });
-        this._callsQueue.addJobPromised(function () { return _this._initialize(); });
     }
-    DynaQueueHandler.prototype._initialize = function () {
+    DynaQueueHandler.prototype.init = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _DynaDiskMemory, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 6, , 7]);
-                        _DynaDiskMemory = void 0;
-                        if (!isNode_1.isNode) return [3 /*break*/, 2];
-                        return [4 /*yield*/, Promise.resolve().then(function () { return require("dyna-disk-memory/dist/commonJs/node"); })];
+                        if (this._initialized)
+                            return [2 /*return*/];
+                        this._initialized = true;
+                        _a.label = 1;
                     case 1:
+                        _a.trys.push([1, 7, , 8]);
+                        this._queue = new dyna_job_queue_1.DynaJobQueue({ parallels: this._config.parallels });
+                        this.addJob = this._queue.jobFactory(this.addJob.bind(this));
+                        this._processQueuedItem = this._queue.jobFactory(this._processQueuedItem.bind(this));
+                        _DynaDiskMemory = void 0;
+                        if (!isNode_1.isNode) return [3 /*break*/, 3];
+                        return [4 /*yield*/, Promise.resolve().then(function () { return require("dyna-disk-memory/dist/commonJs/node"); })];
+                    case 2:
                         _DynaDiskMemory = (_a.sent()).DynaDiskMemory;
-                        return [3 /*break*/, 4];
-                    case 2: return [4 /*yield*/, Promise.resolve().then(function () { return require("dyna-disk-memory/dist/commonJs/web"); })];
-                    case 3:
-                        _DynaDiskMemory = (_a.sent()).DynaDiskMemory;
-                        _a.label = 4;
+                        return [3 /*break*/, 5];
+                    case 3: return [4 /*yield*/, Promise.resolve().then(function () { return require("dyna-disk-memory/dist/commonJs/web"); })];
                     case 4:
+                        _DynaDiskMemory = (_a.sent()).DynaDiskMemory;
+                        _a.label = 5;
+                    case 5:
                         this._memory = new _DynaDiskMemory({ diskPath: this._config.diskPath });
                         return [4 /*yield*/, this._memory.delAll()];
-                    case 5:
-                        _a.sent();
-                        return [3 /*break*/, 7];
                     case 6:
+                        _a.sent();
+                        this._debugReady = true;
+                        return [3 /*break*/, 8];
+                    case 7:
                         error_1 = _a.sent();
-                        return [2 /*return*/, Promise.reject({
-                                code: 1810261314,
-                                errorType: dyna_interfaces_1.EErrorType.HW,
-                                message: 'DynaQueueHandler, error cleaning the previous session',
-                                error: error_1,
-                            })];
-                    case 7: return [2 /*return*/];
+                        throw {
+                            code: 1810261314,
+                            errorType: dyna_interfaces_1.EErrorType.HW,
+                            message: 'DynaQueueHandler, error cleaning the previous session',
+                            error: error_1,
+                        };
+                    case 8: return [2 /*return*/];
                 }
             });
         });
     };
     DynaQueueHandler.prototype.isNotWorking = function () {
-        var _this = this;
-        if (!this.isWorking)
-            return Promise.resolve();
-        return new Promise(function (resolve) {
-            _this._updateIsNotWorking.push(resolve);
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                if (!this.isWorking)
+                    return [2 /*return*/];
+                return [2 /*return*/, this._queue.addJobPromised(function () { return __awaiter(_this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            if (!this.isWorking)
+                                return [2 /*return*/];
+                            else
+                                throw {};
+                            return [2 /*return*/];
+                        });
+                    }); })
+                        .catch(function () { return _this.isNotWorking(); })];
+            });
         });
     };
     DynaQueueHandler.prototype.addJob = function (data, priority) {
         if (priority === void 0) { priority = 1; }
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this._callsQueue.addJobPromised(function () {
-                        return _this._addJob(data, priority);
-                    })];
-            });
-        });
-    };
-    DynaQueueHandler.prototype._addJob = function (data, priority) {
-        if (priority === void 0) { priority = 1; }
-        return __awaiter(this, void 0, void 0, function () {
-            var jobId;
-            var _this = this;
+            var errorMessage, jobId;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        if (!this._initialized) {
+                            errorMessage = 'DynaQueueHandler is not initialized! Call `.init()` where is `:Promise<void>` before any call.';
+                            console.error(errorMessage);
+                            throw { message: errorMessage };
+                        }
+                        if (!this._debugReady)
+                            console.error('not ready!!!!');
                         jobId = dyna_guid_1.guid(1);
                         return [4 /*yield*/, this._memory.set('data', jobId, data)];
                     case 1:
                         _a.sent();
-                        data = null; // for GC
-                        this._jobIndex.jobs.push({ jobId: jobId, priority: priority, order: this._order++ });
-                        if (!this._hasDiffPriorities &&
-                            this._jobIndex.jobs.length > 1 &&
-                            this._jobIndex.jobs[this._jobIndex.jobs.length - 2].priority !== priority) {
-                            this._hasDiffPriorities = true;
-                        }
-                        if (this._hasDiffPriorities)
-                            this._sortJobs();
-                        this._jobsQueue.addJobCallback(function (done) { return __awaiter(_this, void 0, void 0, function () {
-                            var jobItem, data;
-                            var _this = this;
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0:
-                                        jobItem = this._jobIndex.jobs.shift();
-                                        if (!jobItem) { // this is not possible, is only for TS
-                                            done();
-                                            return [2 /*return*/];
-                                        }
-                                        if (this._jobIndex.jobs.length === 0)
-                                            this._hasDiffPriorities = false;
-                                        return [4 /*yield*/, this._memory.get('data', jobItem.jobId)];
-                                    case 1:
-                                        data = _a.sent();
-                                        this._isWorking = true;
-                                        this._config.onJob(data, function () {
-                                            _this._memory.del('data', jobItem.jobId)
-                                                .catch(function (error) {
-                                                console.error("DynaQueueHandler: 1810261313 dyna-disk-memory cannot delete this job id [" + jobItem.jobId + "]\n                This is not a critical error (so far), the app is still running without any problem.\n                This error is occurred when:\n                - There are more than one instances that are using this folder (this is not allowed)\n                - A demon is monitoring and blocking the files (like webpack)\n                - Or, if this happens in production only, the disk has a problem (check the error)", error);
-                                            })
-                                                .then(function () {
-                                                // if no jobs, check if notWorking is called and resolve it/them
-                                                if (_this._jobsQueue.stats.jobs === 0) {
-                                                    while (_this._updateIsNotWorking.length) {
-                                                        // @ts-ignore
-                                                        _this._updateIsNotWorking.shift()();
-                                                    }
-                                                }
-                                            })
-                                                .then(function () { return _this._isWorking = false; })
-                                                .then(done);
-                                        });
-                                        data = null; // for GC
-                                        return [2 /*return*/];
-                                }
-                            });
-                        }); });
+                        this._jobs.push({
+                            index: (priority * 10000000) + (++this._jobIndex),
+                            jobId: jobId,
+                        });
+                        this._jobs = this._jobs.sort(function (a, b) { return a.index - b.index; });
+                        this._processQueuedItem();
                         return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DynaQueueHandler.prototype._processQueuedItem = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var jobItem, data, e_1, e_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 7, , 8]);
+                        this._isWorking = true;
+                        jobItem = this._jobs.shift();
+                        if (!jobItem) return [3 /*break*/, 6];
+                        return [4 /*yield*/, this._memory.get('data', jobItem.jobId)];
+                    case 1:
+                        data = _a.sent();
+                        return [4 /*yield*/, this._memory.del('data', jobItem.jobId)];
+                    case 2:
+                        _a.sent();
+                        _a.label = 3;
+                    case 3:
+                        _a.trys.push([3, 5, , 6]);
+                        return [4 /*yield*/, this._config.onJob(data)];
+                    case 4:
+                        _a.sent();
+                        return [3 /*break*/, 6];
+                    case 5:
+                        e_1 = _a.sent();
+                        return [3 /*break*/, 6];
+                    case 6:
+                        this._isWorking = false;
+                        return [3 /*break*/, 8];
+                    case 7:
+                        e_2 = _a.sent();
+                        console.error('DynaQueueHandler _processQueuedItem error', e_2);
+                        this._isWorking = false;
+                        return [3 /*break*/, 8];
+                    case 8: return [2 /*return*/];
                 }
             });
         });
     };
     Object.defineProperty(DynaQueueHandler.prototype, "hasJobs", {
         get: function () {
-            return !!this._jobIndex.jobs.length;
+            return !!this.jobsCount;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(DynaQueueHandler.prototype, "jobsCount", {
         get: function () {
-            return this._jobIndex.jobs.length;
+            return this._jobs.length;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(DynaQueueHandler.prototype, "isWorking", {
         get: function () {
-            return this._isWorking;
+            return this.hasJobs || this._isWorking;
         },
         enumerable: true,
         configurable: true
     });
-    DynaQueueHandler.prototype._sortJobs = function () {
-        var output = [];
-        this._jobIndex.jobs = this._jobIndex.jobs.sort(function (jobItemA, jobItemB) { return jobItemA.priority - jobItemB.priority; });
-        var jobs = this._jobIndex.jobs.reduce(function (acc, jobItem) {
-            if (!acc[jobItem.priority])
-                acc[jobItem.priority] = [];
-            acc[jobItem.priority].push(jobItem);
-            return acc;
-        }, {});
-        Object.keys(jobs)
-            .map(function (priority) { return jobs[priority]; })
-            .forEach(function (jobItems) {
-            output = output.concat(jobItems.sort(function (jobItemA, jobItemB) { return jobItemA.order - jobItemB.order; }));
-        });
-        this._jobIndex.jobs = output;
-    };
     return DynaQueueHandler;
 }());
 exports.DynaQueueHandler = DynaQueueHandler;
