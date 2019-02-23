@@ -1,6 +1,6 @@
 {
   "name": "dyna-queue-handler",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Job queue that uses the disk and not the memory, for node.js services.",
   "repository": {
     "type": "git",
