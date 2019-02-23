@@ -1,4 +1,4 @@
-import {DynaQueueHandler} from "../../src";
+import {DynaQueueHandler} from "../../dist/commonJs";
 import {delay} from "../../src/utils/delay";
 
 declare let jasmine: any, describe: any, expect: any, it: any;
@@ -9,6 +9,7 @@ interface IParcel {
 }
 
 describe('Dyna Queue Handler priority test', () => {
+  console.warn('Test is using the `dist/commonJs` version; consider to build if you change the basecode');
   const PROCESS_DELAY: number = 100;
   const processed: IParcel[] = [];
   let queue: DynaQueueHandler;

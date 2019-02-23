@@ -1,10 +1,11 @@
-import {DynaQueueHandler} from "../../src";
+import {DynaQueueHandler} from "../../dist/commonJs";
 import {delay} from "../../src/utils/delay";
 
 declare let jasmine: any, describe: any, expect: any, it: any;
 if (typeof jasmine !== 'undefined') jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
 describe('Dyna Queue Handler, fast entry', () => {
+  console.warn('Test is using the `dist/commonJs` version; consider to build if you change the basecode');
 
   it('add items with 10ms delay', (done: Function) => {
     const COUNT = 10;
