@@ -48,7 +48,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var dyna_guid_1 = require("dyna-guid");
 var dyna_interfaces_1 = require("dyna-interfaces");
-var dyna_job_queue_1 = require("dyna-job-queue");
+var commonJs_1 = require("dyna-job-queue/dist/commonJs");
 var isNode_1 = require("./isNode");
 var DynaQueueHandler = /** @class */ (function () {
     function DynaQueueHandler(_config) {
@@ -72,7 +72,7 @@ var DynaQueueHandler = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 7, , 8]);
-                        this._queue = new dyna_job_queue_1.DynaJobQueue({ parallels: this._config.parallels });
+                        this._queue = new commonJs_1.DynaJobQueue({ parallels: this._config.parallels });
                         this.addJob = this._queue.jobFactory(this.addJob.bind(this));
                         this._processQueuedItem = this._queue.jobFactory(this._processQueuedItem.bind(this));
                         _DynaDiskMemory = void 0;

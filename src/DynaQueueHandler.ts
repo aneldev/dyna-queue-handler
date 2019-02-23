@@ -1,7 +1,7 @@
 import {guid} from "dyna-guid";
 import {IDynaDiskMemory} from "dyna-disk-memory";
 import {EErrorType, IError} from "dyna-interfaces";
-import {DynaJobQueue} from "dyna-job-queue";
+import {DynaJobQueue} from "dyna-job-queue/dist/commonJs";
 import {isNode} from "./isNode";
 
 export interface IDynaQueueHandlerConfig<TData> {

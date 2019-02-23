@@ -46,7 +46,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 import { guid } from "dyna-guid";
 import { EErrorType } from "dyna-interfaces";
-import { DynaJobQueue } from "dyna-job-queue";
+import { DynaJobQueue } from "dyna-job-queue/dist/commonJs";
 import { isNode } from "./isNode";
 var DynaQueueHandler = /** @class */ (function () {
     function DynaQueueHandler(_config) {

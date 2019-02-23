@@ -2945,6 +2945,11 @@ dyna-job-queue@^3.0.0:
   resolved "https://registry.yarnpkg.com/dyna-job-queue/-/dyna-job-queue-3.1.1.tgz#0597c7621e0aefa1ef8449b036c87dd40bd68a4d"
   integrity sha512-9I8yuW06i367EWpKjc27KgAXPRQ5uK9UmLQ32cis10tb3q87Ls3xMbzyXwPdit5Ey6ktlU8ryeWmNHGVADv7OA==
 
+dyna-job-queue@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/dyna-job-queue/-/dyna-job-queue-3.1.2.tgz#0d8e68bc23ff314b8e347e5818f6c772b46dc948"
+  integrity sha512-uTqRbWLWK2irCmb6e8gaeoiSIfDDJ62pMTA/DgcI4DNeVHkIY59ES6HB1M8iZ+Cypjnp6hJKwA/os8hNDCIJUw==
+
 dyna-loops@^1.7.2:
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/dyna-loops/-/dyna-loops-1.7.2.tgz#037fbcbf087f11a8b9cf75ed7360f4de4c44fb8e"
