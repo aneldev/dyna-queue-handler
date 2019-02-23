@@ -27,23 +27,32 @@ _Typescript example_
 ```
   import {DynaQueueHandler} from 'dyna-queue-handler';
 
-  interface IParcel {                               // out type of data
+  interface IParcel {                                 // out type of data
     serial: string;
   }
 
   let queue = new DynaQueueHandler({
-    diskPath: './temp/my-process-temp-space',       // needed in both nodejs and web
-    parallels: 5,                                   // (default 1) how may parallel jobs might be executed at a time
-    onJob: (data: IParcel, done: Function) => {     // the callback function called with the data
+    diskPath: './temp/my-process-temp-space',         // needed in both nodejs and web
+    parallels: 5,                                     // (default 1) how may parallel jobs might be executed at a time
+    onJob: async (data: IParcel): Promise<void> => {  // return a promise to continue
       // process the data here
-      done():                                       // don't forget to call done to process the next one
     }
   });
 
-  queue.addJob<IParcel>({serial: "y"}, 200);        // push something with priority 100 (smaller have priority)
-  queue.addJob<IParcel>({serial: "z"}, 2000);       // push something no so urgent
+  queue.addJob<IParcel>({serial: "y"}, 200);          // push something with priority 100 (smaller have priority)
+  queue.addJob<IParcel>({serial: "z"}, 2000);         // push something no so urgent
 
   queue.isNotWorking()
     .then(() => consol.log('Nothing in the queue'));    // you may shut down safely
 
 ```
+
+# Change log
+
+# 4.0.0
+
+Stable version
+
+# 5.0.0
+
+The `onJob` is now Promise instead of using the `done()` callback.
