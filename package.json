@@ -49,7 +49,6 @@
   "license": "MIT",
   "dependencies": {
     "dyna-debounce": "^2.0.1",
-    "dyna-disk-memory": "^4.0.0",
     "dyna-guid": "^1.0.8",
     "dyna-interfaces": "^4.0.6",
     "dyna-job-queue": "^3.1.2"
@@ -67,6 +66,7 @@
     "babel-loader": "^8.0.4",
     "chokidar": "^1.7.0",
     "circular-dependency-plugin": "^4.0.0",
+    "dyna-disk-memory": "^4.0.0",
     "dyna-loops": "^1.7.2",
     "dyna-node-console": "^1.0.7",
     "enzyme": "^3.7.0",

@@ -1,13 +1,14 @@
 import {guid} from "dyna-guid";
-import {IDynaDiskMemory} from "dyna-disk-memory";
 import {EErrorType, IError} from "dyna-interfaces";
 import {DynaJobQueue} from "dyna-job-queue/dist/commonJs";
-import {isNode} from "./isNode";
 
 export interface IDynaQueueHandlerConfig<TData> {
-  diskPath: string;
   parallels?: number;
   onJob: (data: TData) => Promise<void>;
+  memorySet: (key: string, data: any) => Promise<void>;
+  memoryGet: (key: string) => Promise<any>;
+  memoryDel: (key: string) => Promise<void>;
+  memoryDelAll: () => Promise<void>;
 }
 
 export class DynaQueueHandler {
@@ -20,7 +21,6 @@ export class DynaQueueHandler {
 
   private _initialized = false;
   private _queue: DynaJobQueue;
-  private _memory: IDynaDiskMemory;
   private _isWorking: boolean = false;
 
   private _jobIndex: number = 0;
@@ -34,18 +34,9 @@ export class DynaQueueHandler {
 
     try {
       this._queue = new DynaJobQueue({parallels: this._config.parallels});
-
       this.addJob = this._queue.jobFactory(this.addJob.bind(this));
       this._processQueuedItem = this._queue.jobFactory(this._processQueuedItem.bind(this));
-
-      let _DynaDiskMemory;
-      if (isNode) {
-        _DynaDiskMemory = (await import("dyna-disk-memory/dist/commonJs/node")).DynaDiskMemory;
-      } else {
-        _DynaDiskMemory = (await import("dyna-disk-memory/dist/commonJs/web")).DynaDiskMemory;
-      }
-      this._memory = new _DynaDiskMemory({diskPath: this._config.diskPath});
-      await this._memory.delAll();
+      await this._config.memoryDelAll();
       this._debugReady = true;
     } catch (error) {
       throw {
@@ -75,7 +66,7 @@ export class DynaQueueHandler {
 
     if (!this._debugReady) console.error('not ready!!!!');
     const jobId: string = guid(1);
-    await this._memory.set('data', jobId, data);
+    await this._config.memorySet(jobId, data);
 
     this._jobs.push({
       index: (priority * 10000000) + (++this._jobIndex),
@@ -92,8 +83,8 @@ export class DynaQueueHandler {
       this._isWorking = true;
       const jobItem = this._jobs.shift();
       if (jobItem) {
-        const data = await this._memory.get('data', jobItem.jobId);
-        await this._memory.del('data', jobItem.jobId);
+        const data = await this._config.memoryGet(jobItem.jobId);
+        await this._config.memoryDel(jobItem.jobId);
         try {
           await this._config.onJob(data);
         } catch (e) {

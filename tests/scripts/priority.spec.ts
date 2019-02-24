@@ -1,4 +1,6 @@
-import {DynaQueueHandler} from "../../dist/commonJs";
+import {DynaDiskMemory} from "dyna-disk-memory/dist/commonJs/node";
+
+import {DynaQueueHandler} from "../../src";
 import {delay} from "../../src/utils/delay";
 
 declare let jasmine: any, describe: any, expect: any, it: any;
@@ -9,18 +11,23 @@ interface IParcel {
 }
 
 describe('Dyna Queue Handler priority test', () => {
-  console.warn('Test is using the `dist/commonJs` version; consider to build if you change the basecode');
   const PROCESS_DELAY: number = 100;
   const processed: IParcel[] = [];
+  let memory = new DynaDiskMemory({
+    diskPath: './temp/testDynaQueueHandler-priority-test',
+  });
   let queue: DynaQueueHandler;
 
   it('should create the queue', (done: Function) => {
     queue = new DynaQueueHandler({
-      diskPath: './temp/testDynaQueueHandler-priority-test',
       onJob: async (data: IParcel) => {
         processed.push(data);
         await delay(PROCESS_DELAY);
-      }
+      },
+      memorySet: (key, data) => memory.set('data', key, data),
+      memoryGet: (key) => memory.get('data', key),
+      memoryDel: (key) => memory.del('data', key),
+      memoryDelAll: () => memory.delAll(),
     });
     queue.init()
       .then(() => done());

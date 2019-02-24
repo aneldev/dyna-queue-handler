@@ -1,22 +1,28 @@
-import {DynaQueueHandler} from "../../dist/commonJs";
+import {DynaDiskMemory} from "dyna-disk-memory/dist/commonJs/node";
+
+import {DynaQueueHandler} from "../../src";
 import {delay} from "../../src/utils/delay";
 
 declare let jasmine: any, describe: any, expect: any, it: any;
 if (typeof jasmine !== 'undefined') jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
 describe('Dyna Queue Handler, fast entry', () => {
-  console.warn('Test is using the `dist/commonJs` version; consider to build if you change the basecode');
-
   it('add items with 10ms delay', (done: Function) => {
     const COUNT = 10;
     const DELAY = 10;
     let serials: number[] = [];
+    const memory = new DynaDiskMemory({
+      diskPath: './temp/testDynaQueueHandler-fast-entry-test',
+    });
     const queue = new DynaQueueHandler({
-      diskPath: './temp/testDynaQueueHandler-priority-test',
       onJob: async (serial: number) => {
         await delay(DELAY)
         serials.push(serial);
-      }
+      },
+      memorySet: (key, data) => memory.set('data', key, data),
+      memoryGet: (key) => memory.get('data', key),
+      memoryDel: (key) => memory.del('data', key),
+      memoryDelAll: () => memory.delAll(),
     });
 
     Promise.resolve()
@@ -47,11 +53,17 @@ describe('Dyna Queue Handler, fast entry', () => {
     const COUNT = 10;
     const DELAY = 4;
     let serials: number[] = [];
+    let memory = new DynaDiskMemory({
+      diskPath: './temp/testDynaQueueHandler-fast-entry-test',
+    });
     const queue = new DynaQueueHandler({
-      diskPath: './temp/testDynaQueueHandler-priority-test',
       onJob: async (serial: number) => {
         serials.push(serial);
-      }
+      },
+      memorySet: (key, data) => memory.set('data', key, data),
+      memoryGet: (key) => memory.get('data', key),
+      memoryDel: (key) => memory.del('data', key),
+      memoryDelAll: () => memory.delAll(),
     });
 
     Promise.resolve()
@@ -81,11 +93,17 @@ describe('Dyna Queue Handler, fast entry', () => {
 
   it('add item instantly', (done: Function) => {
     let serials: number[] = [];
+    let memory = new DynaDiskMemory({
+      diskPath: './temp/testDynaQueueHandler-fast-entry-test',
+    });
     const queue = new DynaQueueHandler({
-      diskPath: './temp/testDynaQueueHandler-priority-test',
       onJob: async (serial: number) => {
         serials.push(serial);
-      }
+      },
+      memorySet: (key, data) => memory.set('data', key, data),
+      memoryGet: (key) => memory.get('data', key),
+      memoryDel: (key) => memory.del('data', key),
+      memoryDelAll: () => memory.delAll(),
     });
 
     Promise.resolve()
