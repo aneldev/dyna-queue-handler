@@ -11,7 +11,7 @@ interface IParcel {
 }
 
 describe('Dyna Queue Handler priority test', () => {
-  const PROCESS_DELAY: number = 100;
+  const PROCESS_DELAY: number = 50;
   const processed: IParcel[] = [];
   let memory = new DynaDiskMemory({
     diskPath: './temp/testDynaQueueHandler-priority-test',
@@ -33,20 +33,31 @@ describe('Dyna Queue Handler priority test', () => {
       .then(() => done());
   });
 
-  it('should add 10 jobs with priority 2oo', (done: () => void) => {
+  it('should add 10 jobs with priority 0', (done: () => void) => {
     Promise.all(
       Array(10).fill(null)
-        .map((v, index) => queue.addJob<IParcel>({serial: index}, 200))
+        .map((v, index) => queue.addJob<IParcel>({ serial: index }, 0))
     )
       .then(() => done());
   });
 
-  it('should add 2 jobs with priority 1o', (done: () => void) => {
+  it('should add 4 jobs with priority 2', (done: () => void) => {
     Promise.all(
-      Array(2).fill(null)
+      Array(4).fill(null)
+        .map((v, index) => {
+          const serial: number = index + 200;
+          queue.addJob<IParcel>({ serial }, 2);
+        })
+    )
+      .then(() => done());
+  });
+
+  it('should add 4 jobs with priority 1', (done: () => void) => {
+    Promise.all(
+      Array(4).fill(null)
         .map((v, index) => {
           const serial: number = index + 100;
-          queue.addJob<IParcel>({serial}, 10);
+          queue.addJob<IParcel>({ serial }, 1);
         })
     )
       .then(() => done());
@@ -64,7 +75,11 @@ describe('Dyna Queue Handler priority test', () => {
           .map((p: IParcel) => p.serial)
           .join()
       )
-        .toBe([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 100, 101].join());
+        .toBe([
+          0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+          100, 101, 102, 103,
+          200, 201, 202, 203,
+        ].join());
       done();
     }, 100); // wait for the jobs to be added, we should wait for each addJob
   });

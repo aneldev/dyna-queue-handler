@@ -2921,11 +2921,11 @@ dyna-debounce@^2.0.1:
     lodash.debounce "^4.0.8"
 
 dyna-disk-memory@^4.0.0:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/dyna-disk-memory/-/dyna-disk-memory-4.0.2.tgz#9aa104dc19eea3a7567268173aa87fbe95411cf7"
-  integrity sha512-AumnTpeYGs62HhehP9nPTml5AOO21zdpNm2FlA52dmy/R4fBO5HqcZ3y/kMuRCr8cptRbQth4BGVt/JsTl0coQ==
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/dyna-disk-memory/-/dyna-disk-memory-4.0.3.tgz#2d812ec4ab0693227028041ae2fbdd01fbe395bd"
+  integrity sha512-vGkb9VPtyc9hosNhSklOZ1Z0RnFDdieHw59y28aTp8qXcdypr892Ylo9Y8y0O+msskI/GMNybIOQGU0KEEygDw==
   dependencies:
-    dyna-job-queue "^3.0.0"
+    dyna-job-queue "^4.0.1"
     dyna-node-fs "^1.0.2"
     dyna-universal "^1.3.5"
     md5 "^2.2.1"
@@ -2935,20 +2935,25 @@ dyna-guid@^1.0.8:
   resolved "https://registry.yarnpkg.com/dyna-guid/-/dyna-guid-1.0.10.tgz#0aab519f22ef399ef43aed44f9bf905d609b4bc8"
   integrity sha512-3dzl1B2+9VUM1zaPXiMaVCSH+oS6JYHp/0iwI25qbj0NpHFHagLgDWkkDGSXTT+vMQFHb8CPIDrDjRMFnFwMuQ==
 
-dyna-interfaces@^4.0.0, dyna-interfaces@^4.0.6:
+dyna-interfaces@^4.0.0:
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/dyna-interfaces/-/dyna-interfaces-4.0.9.tgz#3e4fce0b2a688f09e7c96595582af5760c368b83"
+  integrity sha512-uxeqd77izOTLLDnI0anEme3LkY3zzUo+B1rynkOvI9+ewjG6lYBRFdvn4MlO8BEVPKpbAl7fWdwVK1O0EaB46g==
+
+dyna-interfaces@^4.0.6:
   version "4.0.7"
   resolved "https://registry.yarnpkg.com/dyna-interfaces/-/dyna-interfaces-4.0.7.tgz#89cbcb9b5761f9de3a7b07d9f549a5e6583b6f5b"
   integrity sha512-qCANoLNujUPuiVJ3Tu7t3J+x86kr2xFwO942lACfPl+ydLCVc3nZvavh0xRAQ5652NLjo9COte7GNlwL/+kyfA==
-
-dyna-job-queue@^3.0.0:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/dyna-job-queue/-/dyna-job-queue-3.1.1.tgz#0597c7621e0aefa1ef8449b036c87dd40bd68a4d"
-  integrity sha512-9I8yuW06i367EWpKjc27KgAXPRQ5uK9UmLQ32cis10tb3q87Ls3xMbzyXwPdit5Ey6ktlU8ryeWmNHGVADv7OA==
 
 dyna-job-queue@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/dyna-job-queue/-/dyna-job-queue-3.1.2.tgz#0d8e68bc23ff314b8e347e5818f6c772b46dc948"
   integrity sha512-uTqRbWLWK2irCmb6e8gaeoiSIfDDJ62pMTA/DgcI4DNeVHkIY59ES6HB1M8iZ+Cypjnp6hJKwA/os8hNDCIJUw==
+
+dyna-job-queue@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/dyna-job-queue/-/dyna-job-queue-4.0.1.tgz#eff572424e6ed78d244e8d8040f4adcf189d7b2b"
+  integrity sha512-Z6pdx0UzHgIDg6Mqyt+of5t/HoCHPyoO6yvZry5RWdwLOkeG/drCUgSx22aW+hCqKjzaMv4HQjfe4PdmNqpWXg==
 
 dyna-loops@^1.7.2:
   version "1.7.2"
