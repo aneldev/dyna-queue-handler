@@ -33,31 +33,31 @@ describe('Dyna Queue Handler priority test', () => {
       .then(() => done());
   });
 
-  it('should add 10 jobs with priority 0', (done: () => void) => {
+  it('should add 10 jobs with priority 10', (done: () => void) => {
     Promise.all(
       Array(10).fill(null)
-        .map((v, index) => queue.addJob<IParcel>({ serial: index }, 0))
+        .map((v, index) => queue.addJob<IParcel>({ serial: index }, 10))
     )
       .then(() => done());
   });
 
-  it('should add 4 jobs with priority 2', (done: () => void) => {
+  it('should add 4 jobs with priority 2000', (done: () => void) => {
     Promise.all(
       Array(4).fill(null)
         .map((v, index) => {
           const serial: number = index + 200;
-          queue.addJob<IParcel>({ serial }, 2);
+          queue.addJob<IParcel>({ serial }, 2000);
         })
     )
       .then(() => done());
   });
 
-  it('should add 4 jobs with priority 1', (done: () => void) => {
+  it('should add 4 jobs with priority 100', (done: () => void) => {
     Promise.all(
       Array(4).fill(null)
         .map((v, index) => {
           const serial: number = index + 100;
-          queue.addJob<IParcel>({ serial }, 1);
+          queue.addJob<IParcel>({ serial }, 100);
         })
     )
       .then(() => done());
