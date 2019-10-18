@@ -5,7 +5,6 @@ export interface IDynaQueueHandlerConfig<TData> {
     memoryGet: (key: string) => Promise<any>;
     memoryDel: (key: string) => Promise<void>;
     memoryDelAll: () => Promise<void>;
-    debugId: string;
 }
 export declare class DynaQueueHandler {
     private readonly _config;
