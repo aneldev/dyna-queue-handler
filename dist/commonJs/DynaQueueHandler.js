@@ -71,7 +71,7 @@ var DynaQueueHandler = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        this._queue = new commonJs_1.DynaJobQueue({ parallels: this._config.parallels });
+                        this._queue = new commonJs_1.DynaJobQueue({ parallels: this._config.parallels, debugId: this._config.debugId });
                         this.addJob = this._queue.jobFactory(this.addJob.bind(this));
                         this._processQueuedItem = this._queue.jobFactory(this._processQueuedItem.bind(this));
                         return [4 /*yield*/, this._config.memoryDelAll()];
