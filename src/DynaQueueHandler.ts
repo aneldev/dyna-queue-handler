@@ -20,13 +20,11 @@ export class DynaQueueHandler {
   }
 
   private _initialized = false;
-  private _queue: DynaJobQueue;
+  private _queue: DynaJobQueue; // is used to serialize the methods of this class only
   private _isWorking: boolean = false;
 
   private _jobIndex: number = 0;
   private _jobs: Array<{ index: number, jobId: string }> = [];
-
-  private _debugReady = false;
 
   public async init(): Promise<void> {
     if (this._initialized) return;
@@ -37,7 +35,6 @@ export class DynaQueueHandler {
       this.addJob = this._queue.jobFactory(this.addJob.bind(this));
       this._processQueuedItem = this._queue.jobFactory(this._processQueuedItem.bind(this));
       await this._config.memoryDelAll();
-      this._debugReady = true;
     } catch (error) {
       throw {
         code: 1810261314,
@@ -64,7 +61,6 @@ export class DynaQueueHandler {
       throw {message: errorMessage};
     }
 
-    if (!this._debugReady) console.error('not ready!!!!');
     const jobId: string = guid(1);
     await this._config.memorySet(jobId, data);
 
