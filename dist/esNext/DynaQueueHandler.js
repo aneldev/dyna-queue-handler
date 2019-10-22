@@ -54,7 +54,6 @@ var DynaQueueHandler = /** @class */ (function () {
         this._isWorking = false;
         this._jobIndex = 0;
         this._jobs = [];
-        this._debugReady = false;
         this._config = __assign({ parallels: 1 }, this._config);
     }
     DynaQueueHandler.prototype.init = function () {
@@ -75,7 +74,6 @@ var DynaQueueHandler = /** @class */ (function () {
                         return [4 /*yield*/, this._config.memoryDelAll()];
                     case 2:
                         _a.sent();
-                        this._debugReady = true;
                         return [3 /*break*/, 4];
                     case 3:
                         error_1 = _a.sent();
@@ -121,8 +119,6 @@ var DynaQueueHandler = /** @class */ (function () {
                             console.error(errorMessage);
                             throw { message: errorMessage };
                         }
-                        if (!this._debugReady)
-                            console.error('not ready!!!!');
                         jobId = guid(1);
                         return [4 /*yield*/, this._config.memorySet(jobId, data)];
                     case 1:
@@ -186,7 +182,7 @@ var DynaQueueHandler = /** @class */ (function () {
     });
     Object.defineProperty(DynaQueueHandler.prototype, "jobsCount", {
         get: function () {
-            return this._jobs.length;
+            return this._jobs.length + (this._isWorking ? 1 : 0);
         },
         enumerable: true,
         configurable: true

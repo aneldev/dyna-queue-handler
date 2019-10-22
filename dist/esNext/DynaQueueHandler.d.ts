@@ -14,7 +14,6 @@ export declare class DynaQueueHandler {
     private _isWorking;
     private _jobIndex;
     private _jobs;
-    private _debugReady;
     init(): Promise<void>;
     isNotWorking(): Promise<void>;
     addJob<TData>(data: TData, priority?: number): Promise<void>;
