@@ -33,7 +33,7 @@ describe('Dyna Queue Handler, jobCount', () => {
           .map((v, index) => index)
           .map(serial => queue.addJob(serial))
       ))
-      .then(() => expect(queue.jobsCount).toBe(COUNT - 1))
+      .then(() => expect(queue.jobsCount).toBe(COUNT))
       .then(() => queue.addJob('completed'))
       .catch(error => {
         console.error('error', error);

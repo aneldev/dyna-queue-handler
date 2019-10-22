@@ -99,7 +99,7 @@ export class DynaQueueHandler {
   }
 
   public get jobsCount(): number {
-    return this._jobs.length;
+    return this._jobs.length + (this._isWorking ? 1 : 0);
   }
 
   public get isWorking(): boolean {
