@@ -2950,10 +2950,10 @@ dyna-job-queue@^4.0.1:
   resolved "https://registry.yarnpkg.com/dyna-job-queue/-/dyna-job-queue-4.0.1.tgz#eff572424e6ed78d244e8d8040f4adcf189d7b2b"
   integrity sha512-Z6pdx0UzHgIDg6Mqyt+of5t/HoCHPyoO6yvZry5RWdwLOkeG/drCUgSx22aW+hCqKjzaMv4HQjfe4PdmNqpWXg==
 
-dyna-job-queue@^5.0.2:
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/dyna-job-queue/-/dyna-job-queue-5.0.2.tgz#b5b9a74e89d04cfb72a2f6b5bf3ce33cfb9925f8"
-  integrity sha512-S/QIzuNuW8u9eOlflMmsepSXgiB8VmpUBq6EshbTvlOGdPZ5oJaIL9rVsJn//86s+wWYh9KPKXDoiRHLAy+EHg==
+dyna-job-queue@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/dyna-job-queue/-/dyna-job-queue-5.1.1.tgz#4fe377d4abbb52ef82143db04f2b7d3d32a062ef"
+  integrity sha512-0JGWgb6q4ncKp4iew3nnUp2WozkEmfwpzltGUCYw1mD76DpXgll0JFIDCq/cB+AXuq3+3siiWtk1zEZccfkgEg==
 
 dyna-loops@^1.7.2:
   version "1.7.2"
