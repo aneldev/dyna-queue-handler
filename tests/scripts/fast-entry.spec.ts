@@ -1,10 +1,10 @@
+import "jest";
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
+
 import {DynaDiskMemory} from "dyna-disk-memory/dist/commonJs/node";
 
 import {DynaQueueHandler} from "../../src";
 import {delay} from "../../src/utils/delay";
-
-declare let jasmine: any, describe: any, expect: any, it: any;
-if (typeof jasmine !== 'undefined') jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
 describe('Dyna Queue Handler, fast entry', () => {
   it('add items with 10ms delay', (done: Function) => {
