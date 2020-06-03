@@ -4,6 +4,7 @@ import {DynaJobQueue} from "dyna-job-queue/dist/commonJs";
 
 export interface IDynaQueueHandlerConfig<TData> {
   parallels?: number;
+  autoStart?: boolean;
   onJob: (data: TData) => Promise<void>;
   memorySet: (key: string, data: any) => Promise<void>;
   memoryGet: (key: string) => Promise<any>;
@@ -17,9 +18,13 @@ export class DynaQueueHandler {
       parallels: 1,
       ...this._config,
     };
+    this._active = this._config.autoStart === undefined
+      ? true
+      : this._config.autoStart;
   }
 
   private _initialized = false;
+  private _active: boolean;
   private _queue: DynaJobQueue; // is used to serialize the methods of this class only
   private _isWorking: boolean = false;
 
@@ -33,7 +38,7 @@ export class DynaQueueHandler {
     try {
       this._queue = new DynaJobQueue({parallels: this._config.parallels});
       this.addJob = this._queue.jobFactory(this.addJob.bind(this));
-      this._processQueuedItem = this._queue.jobFactory(this._processQueuedItem.bind(this));
+      this._processQueuedItem = this._queue.jobFactory(this._processQueuedItem.bind(this)); // This is only for the 1st calls synchronization with the init
       await this._config.memoryDelAll();
     } catch (error) {
       throw {
@@ -43,6 +48,15 @@ export class DynaQueueHandler {
         error,
       } as IError;
     }
+  }
+
+  public start(): void {
+    this._active = true;
+    this._processQueuedItem();
+  }
+
+  public stop(): void {
+    this._active = false;
   }
 
   public async isNotWorking(): Promise<void> {
@@ -75,6 +89,7 @@ export class DynaQueueHandler {
   }
 
   private async _processQueuedItem(): Promise<void> {
+    if (!this._active) return;
     try {
       this._isWorking = true;
       const jobItem = this._jobs.shift();
