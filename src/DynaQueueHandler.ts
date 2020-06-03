@@ -92,6 +92,7 @@ export class DynaQueueHandler {
       console.error('DynaQueueHandler _processQueuedItem error', e);
       this._isWorking = false;
     }
+    if (this.hasJobs) this._processQueuedItem();
   }
 
   public get hasJobs(): boolean {
