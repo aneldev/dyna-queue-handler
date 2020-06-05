@@ -1,6 +1,7 @@
 import "jest";
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
+import {count} from "dyna-count";
 import {DynaDiskMemory} from "dyna-disk-memory/dist/commonJs/node";
 
 import {DynaQueueHandler} from "../../src";
@@ -28,9 +29,7 @@ describe('Dyna Queue Handler, fast entry', () => {
     Promise.resolve()
       .then(() => queue.init())
       .then(() => Promise.all(
-        Array(COUNT)
-          .fill(null)
-          .map((v, index) => index)
+        count(COUNT)
           .map(serial => queue.addJob(serial))
       ))
       .then(() => delay(COUNT * (DELAY * 3)))
@@ -69,9 +68,7 @@ describe('Dyna Queue Handler, fast entry', () => {
     Promise.resolve()
       .then(() => queue.init())
       .then(() => Promise.all(
-        Array(COUNT)
-          .fill(null)
-          .map((v, index) => index)
+        count(COUNT)
           .map(serial => queue.addJob(serial))
         )
       )

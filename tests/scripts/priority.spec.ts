@@ -1,10 +1,12 @@
 import "jest";
+
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
-import {DynaDiskMemory} from "dyna-disk-memory/dist/commonJs/node";
+import { count } from "dyna-count";
+import { DynaDiskMemory } from "dyna-disk-memory/dist/commonJs/node";
 
-import {DynaQueueHandler} from "../../src";
-import {delay} from "../../src/utils/delay";
+import { DynaQueueHandler } from "../../src";
+import { delay } from "../../src/utils/delay";
 
 interface IParcel {
   serial: number;
@@ -35,16 +37,16 @@ describe('Dyna Queue Handler priority test', () => {
 
   it('should add 10 jobs with priority 10', (done: () => void) => {
     Promise.all(
-      Array(10).fill(null)
-        .map((v, index) => queue.addJob<IParcel>({ serial: index }, 10))
+      count(10)
+        .map(index => queue.addJob<IParcel>({ serial: index }, 10))
     )
       .then(() => done());
   });
 
   it('should add 4 jobs with priority 2000', (done: () => void) => {
     Promise.all(
-      Array(4).fill(null)
-        .map((v, index) => {
+      count(4)
+        .map(index => {
           const serial: number = index + 200;
           queue.addJob<IParcel>({ serial }, 2000);
         })
@@ -54,8 +56,8 @@ describe('Dyna Queue Handler priority test', () => {
 
   it('should add 4 jobs with priority 100', (done: () => void) => {
     Promise.all(
-      Array(4).fill(null)
-        .map((v, index) => {
+      count(4)
+        .map(index => {
           const serial: number = index + 100;
           queue.addJob<IParcel>({ serial }, 100);
         })

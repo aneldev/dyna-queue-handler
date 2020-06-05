@@ -55,6 +55,9 @@ var DynaQueueHandler = /** @class */ (function () {
         this._jobIndex = 0;
         this._jobs = [];
         this._config = __assign({ parallels: 1 }, this._config);
+        this._active = this._config.autoStart === undefined
+            ? true
+            : this._config.autoStart;
     }
     DynaQueueHandler.prototype.init = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -70,7 +73,7 @@ var DynaQueueHandler = /** @class */ (function () {
                         _a.trys.push([1, 3, , 4]);
                         this._queue = new DynaJobQueue({ parallels: this._config.parallels });
                         this.addJob = this._queue.jobFactory(this.addJob.bind(this));
-                        this._processQueuedItem = this._queue.jobFactory(this._processQueuedItem.bind(this));
+                        this._processQueuedItem = this._queue.jobFactory(this._processQueuedItem.bind(this)); // This is only for the 1st calls synchronization with the init
                         return [4 /*yield*/, this._config.memoryDelAll()];
                     case 2:
                         _a.sent();
@@ -87,6 +90,13 @@ var DynaQueueHandler = /** @class */ (function () {
                 }
             });
         });
+    };
+    DynaQueueHandler.prototype.start = function () {
+        this._active = true;
+        this._processQueuedItem();
+    };
+    DynaQueueHandler.prototype.stop = function () {
+        this._active = false;
     };
     DynaQueueHandler.prototype.isNotWorking = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -140,35 +150,42 @@ var DynaQueueHandler = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 7, , 8]);
+                        if (!this._active)
+                            return [2 /*return*/];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 8, , 9]);
                         this._isWorking = true;
                         jobItem = this._jobs.shift();
-                        if (!jobItem) return [3 /*break*/, 6];
+                        if (!jobItem) return [3 /*break*/, 7];
                         return [4 /*yield*/, this._config.memoryGet(jobItem.jobId)];
-                    case 1:
+                    case 2:
                         data = _a.sent();
                         return [4 /*yield*/, this._config.memoryDel(jobItem.jobId)];
-                    case 2:
-                        _a.sent();
-                        _a.label = 3;
                     case 3:
-                        _a.trys.push([3, 5, , 6]);
-                        return [4 /*yield*/, this._config.onJob(data)];
-                    case 4:
                         _a.sent();
-                        return [3 /*break*/, 6];
+                        _a.label = 4;
+                    case 4:
+                        _a.trys.push([4, 6, , 7]);
+                        return [4 /*yield*/, this._config.onJob(data)];
                     case 5:
-                        e_1 = _a.sent();
-                        return [3 /*break*/, 6];
+                        _a.sent();
+                        return [3 /*break*/, 7];
                     case 6:
-                        this._isWorking = false;
-                        return [3 /*break*/, 8];
+                        e_1 = _a.sent();
+                        return [3 /*break*/, 7];
                     case 7:
+                        this._isWorking = false;
+                        return [3 /*break*/, 9];
+                    case 8:
                         e_2 = _a.sent();
                         console.error('DynaQueueHandler _processQueuedItem error', e_2);
                         this._isWorking = false;
-                        return [3 /*break*/, 8];
-                    case 8: return [2 /*return*/];
+                        return [3 /*break*/, 9];
+                    case 9:
+                        if (this.hasJobs)
+                            this._processQueuedItem();
+                        return [2 /*return*/];
                 }
             });
         });

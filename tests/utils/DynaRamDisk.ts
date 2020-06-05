@@ -5,7 +5,7 @@ export class DynaRamDisk {
 
   private ramDiskMemory: { [containerName: string]: { [key: string]: any } } = {};
 
-  public async set<TData>(containerName: string, key: string, data: any): Promise<void> {
+  public async set<TData>(containerName: string, key: string, data: TData): Promise<void> {
     if (!this.ramDiskMemory[this.containerPrefix + containerName]) this.ramDiskMemory[this.containerPrefix + containerName] = {};
     this.ramDiskMemory[this.containerPrefix + containerName][key] = data;
   }

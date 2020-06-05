@@ -3388,6 +3388,11 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
+dyna-count@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/dyna-count/-/dyna-count-1.0.1.tgz#5a79ce7e7afafd476f24ae17e60478e5cf90f636"
+  integrity sha512-CoUPk1inHMY9tLjbDQqU8Ay/yNEDCBP4vWLlOs86DJTwZMythuncE4AW41auImXBGyZnKpFiT7R/B4tys6pnlg==
+
 dyna-debounce@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/dyna-debounce/-/dyna-debounce-2.0.1.tgz#1002b689a19a1759079b5f3ae86589fea65c9c07"

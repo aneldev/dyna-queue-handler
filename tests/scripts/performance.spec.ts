@@ -1,5 +1,6 @@
 import "jest";
 
+import { count } from "dyna-count";
 import { DynaDiskMemory } from "dyna-disk-memory/dist/commonJs/node";
 import { DynaRamDisk } from "../utils/DynaRamDisk";
 
@@ -14,7 +15,6 @@ describe('Dyna Queue Handler, Performance', () => {
   let memory: DynaDiskMemory | DynaRamDisk;
   let queue: DynaQueueHandler;
   let processedPackets: IParcel[] = [];
-  let lastPacketAddedAt: number;
 
   const fetch = async (address: string): Promise<IParcel> => ({
     address,
@@ -22,13 +22,14 @@ describe('Dyna Queue Handler, Performance', () => {
   });
 
   beforeAll((done) => {
+    const memoryType: 'disk' | 'memory' = 'memory';
     let diskMemory = new DynaDiskMemory({
       diskPath: './temp/testDynaQueueHandler-priority-test',
     });
     let ramMemory = new DynaRamDisk();
 
     // memory = diskMemory;
-    memory = ramMemory;
+    memory = memoryType === 'memory' ? ramMemory: diskMemory;
     processedPackets = [];
 
     queue = new DynaQueueHandler({
@@ -36,7 +37,6 @@ describe('Dyna Queue Handler, Performance', () => {
       onJob: async (address: string) => {
         const parcel = await fetch(address);
         processedPackets.push(parcel);
-        lastPacketAddedAt = Date.now();
       },
       memorySet: (key, data) => memory.set('data', key, data),
       memoryGet: (key) => memory.get('data', key),
@@ -59,12 +59,12 @@ describe('Dyna Queue Handler, Performance', () => {
     let executeStart: number = -1;
     let executeEnd: number = -1;
 
-    await Promise.all(Array(PACKETS_COUNT)
-      .fill(null)
-      .map((v, index) => {
-        if (index === 0) loadStart = Date.now()
-        return queue.addJob(`address-${index}`);
-      })
+    await Promise.all(
+      count(PACKETS_COUNT)
+        .map(index => {
+          if (index === 0) loadStart = Date.now()
+          return queue.addJob(`address-${index}`);
+        })
     );
     loadEnd = Date.now();
     console.log('Adding to queue', loadEnd - loadStart);
