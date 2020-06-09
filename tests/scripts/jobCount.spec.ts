@@ -36,10 +36,11 @@ describe('Dyna Queue Handler, jobCount', () => {
       ))
       .then(() => expect(queue.jobsCount).toBe(COUNT))
       .then(() => queue.addJob('completed'))
+      .then(() => queue.isNotWorking())
+      .then(() => expect(queue.jobsCount).toBe(0))
       .catch(error => {
         console.error('error', error);
         done();
       });
   });
-
 });
