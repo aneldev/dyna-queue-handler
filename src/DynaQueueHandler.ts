@@ -124,6 +124,10 @@ export class DynaQueueHandler {
     return this._jobs.length + (this._isWorking ? this._queue.stats.running : 0);
   }
 
+  public get processingJobsCount(): number {
+    return this._queue.stats.running;
+  }
+
   public get isWorking(): boolean {
     return this.hasJobs || this._isWorking;
   }

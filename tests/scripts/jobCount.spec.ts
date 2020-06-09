@@ -36,6 +36,7 @@ describe('Dyna Queue Handler, jobCount', () => {
           .map(serial => queue.addJob(serial))
       ))
       .then(() => expect(queue.jobsCount).toBe(COUNT))
+      .then(() => expect(queue.processingJobsCount).toBe(2))
       .then(() => queue.addJob('completed'))
       .then(() => queue.isNotWorking())
       .then(() => expect(queue.jobsCount).toBe(0))
