@@ -121,7 +121,7 @@ export class DynaQueueHandler {
   }
 
   public get jobsCount(): number {
-    return this._jobs.length + (this._isWorking ? 1 : 0);
+    return this._jobs.length + (this._isWorking ? this._queue.stats.running : 0);
   }
 
   public get isWorking(): boolean {

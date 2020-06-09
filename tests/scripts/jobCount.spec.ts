@@ -15,6 +15,7 @@ describe('Dyna Queue Handler, jobCount', () => {
       diskPath: './temp/testDynaQueueHandler-fast-entry-test',
     });
     const queue = new DynaQueueHandler({
+      parallels: 2,
       onJob: async (jobData: any) => {
         if (jobData === 'completed') {
           done();
