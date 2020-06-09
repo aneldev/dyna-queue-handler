@@ -192,6 +192,14 @@ var DynaQueueHandler = /** @class */ (function () {
             });
         });
     };
+    Object.defineProperty(DynaQueueHandler.prototype, "jobs", {
+        get: function () {
+            var _this = this;
+            return Promise.all(this._jobs.map(function (jobItem) { return _this._config.memoryGet(jobItem.jobId); }));
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(DynaQueueHandler.prototype, "hasJobs", {
         get: function () {
             return !!this.jobsCount;
@@ -201,7 +209,14 @@ var DynaQueueHandler = /** @class */ (function () {
     });
     Object.defineProperty(DynaQueueHandler.prototype, "jobsCount", {
         get: function () {
-            return this._jobs.length + (this._isWorking ? 1 : 0);
+            return this._jobs.length + (this._isWorking ? this._queue.stats.running : 0);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(DynaQueueHandler.prototype, "processingJobsCount", {
+        get: function () {
+            return this._queue.stats.running;
         },
         enumerable: true,
         configurable: true

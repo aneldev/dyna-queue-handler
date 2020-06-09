@@ -22,7 +22,9 @@ export declare class DynaQueueHandler {
     isNotWorking(): Promise<void>;
     addJob<TData>(data: TData, priority?: number): Promise<void>;
     private _processQueuedItem;
+    readonly jobs: Promise<any[]>;
     readonly hasJobs: boolean;
     readonly jobsCount: number;
+    readonly processingJobsCount: number;
     readonly isWorking: boolean;
 }
