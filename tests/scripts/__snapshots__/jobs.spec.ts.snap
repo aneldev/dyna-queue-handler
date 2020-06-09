@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dyna Queue Handler, jobs getter should be able to get all current jobs 1`] = `
+Array [
+  Object {
+    "serial": 1,
+  },
+  Object {
+    "serial": 2,
+  },
+  Object {
+    "serial": 3,
+  },
+  Object {
+    "serial": 4,
+  },
+  Object {
+    "serial": 5,
+  },
+  Object {
+    "serial": 6,
+  },
+  Object {
+    "serial": 7,
+  },
+  Object {
+    "serial": 8,
+  },
+  Object {
+    "serial": 9,
+  },
+]
+`;

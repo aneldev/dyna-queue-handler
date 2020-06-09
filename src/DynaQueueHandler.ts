@@ -110,6 +110,12 @@ export class DynaQueueHandler {
     if (this.hasJobs) this._processQueuedItem();
   }
 
+  public get jobs(): Promise<any[]> {
+    return Promise.all(
+      this._jobs.map(jobItem => this._config.memoryGet(jobItem.jobId))
+    );
+  }
+
   public get hasJobs(): boolean {
     return !!this.jobsCount;
   }
