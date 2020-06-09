@@ -3393,13 +3393,6 @@ dyna-count@^1.0.1:
   resolved "https://registry.yarnpkg.com/dyna-count/-/dyna-count-1.0.1.tgz#5a79ce7e7afafd476f24ae17e60478e5cf90f636"
   integrity sha512-CoUPk1inHMY9tLjbDQqU8Ay/yNEDCBP4vWLlOs86DJTwZMythuncE4AW41auImXBGyZnKpFiT7R/B4tys6pnlg==
 
-dyna-debounce@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/dyna-debounce/-/dyna-debounce-2.0.1.tgz#1002b689a19a1759079b5f3ae86589fea65c9c07"
-  integrity sha512-UHRVIWLm6Lxdn8GmOBiectVz0zSHa3atCl9kQIEhwLcQ8n4nh58iZE6tq0rlcK45ieY/mW2ixZzeCU0JjoaOWw==
-  dependencies:
-    lodash.debounce "^4.0.8"
-
 dyna-disk-memory@^4.0.0:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/dyna-disk-memory/-/dyna-disk-memory-4.0.3.tgz#2d812ec4ab0693227028041ae2fbdd01fbe395bd"

@@ -50,7 +50,6 @@
   "author": "Anel dev",
   "license": "MIT",
   "dependencies": {
-    "dyna-debounce": "^2.0.1",
     "dyna-guid": "^1.0.8",
     "dyna-interfaces": "^4.0.6",
     "dyna-job-queue": "^5.1.1"
