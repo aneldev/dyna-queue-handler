@@ -3403,7 +3403,7 @@ dyna-disk-memory@^4.0.0:
     dyna-universal "^1.3.5"
     md5 "^2.2.1"
 
-dyna-guid@^1.0.8:
+dyna-guid@^1.0.10:
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/dyna-guid/-/dyna-guid-1.0.10.tgz#0aab519f22ef399ef43aed44f9bf905d609b4bc8"
   integrity sha512-3dzl1B2+9VUM1zaPXiMaVCSH+oS6JYHp/0iwI25qbj0NpHFHagLgDWkkDGSXTT+vMQFHb8CPIDrDjRMFnFwMuQ==
@@ -3424,9 +3424,9 @@ dyna-job-queue@^4.0.1:
   integrity sha512-Z6pdx0UzHgIDg6Mqyt+of5t/HoCHPyoO6yvZry5RWdwLOkeG/drCUgSx22aW+hCqKjzaMv4HQjfe4PdmNqpWXg==
 
 dyna-job-queue@^5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/dyna-job-queue/-/dyna-job-queue-5.1.1.tgz#4fe377d4abbb52ef82143db04f2b7d3d32a062ef"
-  integrity sha512-0JGWgb6q4ncKp4iew3nnUp2WozkEmfwpzltGUCYw1mD76DpXgll0JFIDCq/cB+AXuq3+3siiWtk1zEZccfkgEg==
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/dyna-job-queue/-/dyna-job-queue-5.1.2.tgz#cccf8801cfa3fd8bfde6ea0495fa594cf1f75ef4"
+  integrity sha512-zgVV4cPToBz4ZLvOdsD6ZbuKP7fjV4ATAIJEKQLPWG8LD0LjumCCgGQ9rXe++S9F2FjbxuIQGSmcIE7r48ZexQ==
 
 dyna-loops@^1.7.2:
   version "1.7.2"

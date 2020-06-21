@@ -50,7 +50,7 @@
   "author": "Anel dev",
   "license": "MIT",
   "dependencies": {
-    "dyna-guid": "^1.0.8",
+    "dyna-guid": "^1.0.10",
     "dyna-interfaces": "^4.0.6",
     "dyna-job-queue": "^5.1.1"
   },
@@ -69,7 +69,6 @@
     "circular-dependency-plugin": "^4.0.0",
     "dyna-count": "^1.0.1",
     "dyna-disk-memory": "^4.0.0",
-    "dyna-guid": "^1.0.10",
     "dyna-loops": "^1.7.2",
     "dyna-node-console": "^1.0.7",
     "dyna-node-fs": "^1.0.4",
