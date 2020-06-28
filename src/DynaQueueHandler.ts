@@ -68,7 +68,7 @@ export class DynaQueueHandler {
       .catch(() => this.isNotWorking());
   }
 
-  public async addJob<TData>(data: TData, priority: number = 1): Promise<void> {
+  public async addJob<TData>(data?: TData, priority: number = 1): Promise<void> {
     if (!this._initialized) {
       const errorMessage = 'DynaQueueHandler is not initialized! Call `.init()` where is `:Promise<void>` before any call.';
       console.error(errorMessage);

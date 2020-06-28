@@ -73,7 +73,7 @@ Start the processing of the jobs. The default configuration has the `autoStart: 
 
 Stops the processing of the jobs.
 
-## addJob<TData>(data: TData, priority: number = 1): Promise<void>
+## addJob<TData>(data?: TData, priority: number = 1): Promise<void>
 
 Add a job providing data for this job and optionally priority.
 

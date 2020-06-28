@@ -1,7 +1,7 @@
 {
   "name": "dyna-queue-handler",
   "version": "6.1.2",
-  "description": "Job queue that uses the disk and not the memory, for node.js services.",
+  "description": "Job queue for web or nodejs apps",
   "repository": {
     "type": "git",
     "url": "http://github.com/aneldev/dyna-queue-handler"
