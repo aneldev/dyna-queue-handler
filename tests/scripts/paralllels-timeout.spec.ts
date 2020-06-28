@@ -6,7 +6,7 @@ import { DynaRamDisk } from "../utils/DynaRamDisk";
 
 import { DynaQueueHandler } from "../../src";
 
-describe('Dyna Queue Handler, Parallels', () => {
+describe('Dyna Queue Handler, Parallels with timeout (realistic)', () => {
   let memory: DynaDiskMemory | DynaRamDisk;
   let queue: DynaQueueHandler;
   let processedPackets: number;
@@ -61,5 +61,22 @@ describe('Dyna Queue Handler, Parallels', () => {
     done();
   });
 
+  test('Should execute and the stacked parallel jobs again', async (done) => {
+    processedPackets = 0;
+
+    count(10)
+      .for(() => queue.addJob(null));
+
+    await new Promise(r => setTimeout(r, 400));
+    expect(processedPackets).toBeGreaterThanOrEqual(5);
+    expect(processedPackets).toBeLessThan(10);
+
+    await new Promise(r => setTimeout(r, 400));
+    expect(processedPackets).toBe(10);
+
+    await queue.isNotWorking();
+
+    done();
+  });
 
 });
