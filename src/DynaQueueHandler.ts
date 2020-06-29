@@ -95,7 +95,8 @@ export class DynaQueueHandler {
       const jobItem = this._jobs.shift();
       if (jobItem) {
         const data = await this._config.memoryGet(jobItem.jobId);
-        await this._config.memoryDel(jobItem.jobId);
+        this._config.memoryDel(jobItem.jobId) // Delete this without wait, to improve performance
+          .catch(e => console.error('DynaQueueHandler: processQueuedItem, cannot memoryDel', e));
         try {
           await this._config.onJob(data);
         } catch (e) {
