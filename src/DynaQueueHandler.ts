@@ -5,7 +5,7 @@ import {DynaJobQueue} from "dyna-job-queue/dist/commonJs";
 export interface IDynaQueueHandlerConfig<TData> {
   parallels?: number;
   autoStart?: boolean;
-  onJob: (data: TData) => Promise<void>;
+  onJob: (data?: TData) => Promise<void>;
   memorySet: (key: string, data: any) => Promise<void>;
   memoryGet: (key: string) => Promise<any>;
   memoryDel: (key: string) => Promise<void>;
