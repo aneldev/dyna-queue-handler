@@ -100,7 +100,7 @@ export class DynaQueueHandler {
         try {
           await this._config.onJob(data);
         } catch (e) {
-          // swallow the error, we don't care of it
+          console.error('DynaQueueHandler: onJob error', e);
         }
       }
       this._isWorking = false;
