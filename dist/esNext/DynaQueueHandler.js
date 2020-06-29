@@ -154,35 +154,35 @@ var DynaQueueHandler = /** @class */ (function () {
                             return [2 /*return*/];
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 8, , 9]);
+                        _a.trys.push([1, 7, , 8]);
                         this._isWorking = true;
                         jobItem = this._jobs.shift();
-                        if (!jobItem) return [3 /*break*/, 7];
+                        if (!jobItem) return [3 /*break*/, 6];
                         return [4 /*yield*/, this._config.memoryGet(jobItem.jobId)];
                     case 2:
                         data = _a.sent();
-                        return [4 /*yield*/, this._config.memoryDel(jobItem.jobId)];
+                        this._config.memoryDel(jobItem.jobId) // Delete this without wait, to improve performance
+                            .catch(function (e) { return console.error('DynaQueueHandler: processQueuedItem, cannot memoryDel', e); });
+                        _a.label = 3;
                     case 3:
-                        _a.sent();
-                        _a.label = 4;
-                    case 4:
-                        _a.trys.push([4, 6, , 7]);
+                        _a.trys.push([3, 5, , 6]);
                         return [4 /*yield*/, this._config.onJob(data)];
-                    case 5:
+                    case 4:
                         _a.sent();
-                        return [3 /*break*/, 7];
-                    case 6:
+                        return [3 /*break*/, 6];
+                    case 5:
                         e_1 = _a.sent();
-                        return [3 /*break*/, 7];
-                    case 7:
+                        console.error('DynaQueueHandler: onJob error', e_1);
+                        return [3 /*break*/, 6];
+                    case 6:
                         this._isWorking = false;
-                        return [3 /*break*/, 9];
-                    case 8:
+                        return [3 /*break*/, 8];
+                    case 7:
                         e_2 = _a.sent();
                         console.error('DynaQueueHandler _processQueuedItem error', e_2);
                         this._isWorking = false;
-                        return [3 /*break*/, 9];
-                    case 9:
+                        return [3 /*break*/, 8];
+                    case 8:
                         if (this.hasJobs)
                             this._processQueuedItem();
                         return [2 /*return*/];

@@ -1,7 +1,7 @@
 export interface IDynaQueueHandlerConfig<TData> {
     parallels?: number;
     autoStart?: boolean;
-    onJob: (data: TData) => Promise<void>;
+    onJob: (data?: TData) => Promise<void>;
     memorySet: (key: string, data: any) => Promise<void>;
     memoryGet: (key: string) => Promise<any>;
     memoryDel: (key: string) => Promise<void>;
@@ -20,7 +20,7 @@ export declare class DynaQueueHandler {
     start(): void;
     stop(): void;
     isNotWorking(): Promise<void>;
-    addJob<TData>(data: TData, priority?: number): Promise<void>;
+    addJob<TData>(data?: TData, priority?: number): Promise<void>;
     private _processQueuedItem;
     readonly jobs: Promise<any[]>;
     readonly hasJobs: boolean;
