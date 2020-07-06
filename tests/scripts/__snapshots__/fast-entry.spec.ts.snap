@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dyna Queue Handler, fast entry add item instantly, should be executed fast 1`] = `Array []`;

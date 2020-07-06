@@ -5,6 +5,7 @@ import {count} from "dyna-count";
 import {DynaDiskMemory} from "dyna-disk-memory/dist/commonJs/node";
 
 import {DynaQueueHandler} from "../../src";
+import { DynaRamDisk } from "../utils/DynaRamDisk";
 import {delay} from "../../src/utils/delay";
 
 describe('Dyna Queue Handler, fast entry', () => {
@@ -117,6 +118,44 @@ describe('Dyna Queue Handler, fast entry', () => {
         console.error('error', error);
         done();
       });
+  });
+
+  it('add item instantly, should be executed fast', async (done: Function) => {
+    let serials: number[] = [];
+    let memory = new DynaRamDisk();
+
+    const queue = new DynaQueueHandler({
+      onJob: async (serial: number) => {
+        serials.push(serial);
+      },
+      memorySet: (key, data) => memory.set('data', key, data),
+      memoryGet: (key) => memory.get('data', key),
+      memoryDel: (key) => memory.del('data', key),
+      memoryDelAll: () => memory.delAll(),
+    });
+
+    await queue.init();
+
+    const started = Date.now();
+
+    await new Promise(r => setTimeout(r, 200))
+
+    await Promise.all(
+      count(200)
+        .map(index => queue.addJob(index + 100))
+    );
+
+    const ended = Date.now();
+
+    const elapsed = ended - started;
+
+    console.debug('Elapsed', elapsed);
+    expect(elapsed).toBeLessThan(300);
+    expect(serials).toMatchSnapshot();
+
+    await queue.isNotWorking();
+
+    done();
   });
 
 });

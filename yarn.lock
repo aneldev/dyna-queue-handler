@@ -3404,13 +3404,13 @@ dyna-count@^1.0.1:
   resolved "https://registry.yarnpkg.com/dyna-count/-/dyna-count-1.1.2.tgz#45a7a01d7f65217f5c1e06fedc8f080111249924"
   integrity sha512-TW66MrXvEWtZ464usZbQcMXk2vsiAhK6OfTZyUQ5HHzODyqOdXfAy6QsxDAxlgMgS8edoVL6L8fTtJwji/hS6w==
 
-dyna-disk-memory@^4.0.0:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/dyna-disk-memory/-/dyna-disk-memory-4.0.3.tgz#2d812ec4ab0693227028041ae2fbdd01fbe395bd"
-  integrity sha512-vGkb9VPtyc9hosNhSklOZ1Z0RnFDdieHw59y28aTp8qXcdypr892Ylo9Y8y0O+msskI/GMNybIOQGU0KEEygDw==
+dyna-disk-memory@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/dyna-disk-memory/-/dyna-disk-memory-4.0.4.tgz#cf51221a1a0d4f62f3c6f8c429d4c24c3ecba100"
+  integrity sha512-y6/6as4Pm3FwyELN6QQKjaRcGBcDfFibaMZ5axF2DChQbAkhsgnNBhKiZHeX+EOoOG8JqnUHMOT/TPnapq5nbQ==
   dependencies:
-    dyna-job-queue "^4.0.1"
-    dyna-node-fs "^1.0.2"
+    dyna-job-queue "^5.1.2"
+    dyna-node-fs "^1.0.4"
     dyna-universal "^1.3.5"
     md5 "^2.2.1"
 
@@ -3429,12 +3429,7 @@ dyna-interfaces@^4.0.6:
   resolved "https://registry.yarnpkg.com/dyna-interfaces/-/dyna-interfaces-4.0.7.tgz#89cbcb9b5761f9de3a7b07d9f549a5e6583b6f5b"
   integrity sha512-qCANoLNujUPuiVJ3Tu7t3J+x86kr2xFwO942lACfPl+ydLCVc3nZvavh0xRAQ5652NLjo9COte7GNlwL/+kyfA==
 
-dyna-job-queue@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/dyna-job-queue/-/dyna-job-queue-4.0.1.tgz#eff572424e6ed78d244e8d8040f4adcf189d7b2b"
-  integrity sha512-Z6pdx0UzHgIDg6Mqyt+of5t/HoCHPyoO6yvZry5RWdwLOkeG/drCUgSx22aW+hCqKjzaMv4HQjfe4PdmNqpWXg==
-
-dyna-job-queue@^5.1.1:
+dyna-job-queue@^5.1.1, dyna-job-queue@^5.1.2:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/dyna-job-queue/-/dyna-job-queue-5.1.2.tgz#cccf8801cfa3fd8bfde6ea0495fa594cf1f75ef4"
   integrity sha512-zgVV4cPToBz4ZLvOdsD6ZbuKP7fjV4ATAIJEKQLPWG8LD0LjumCCgGQ9rXe++S9F2FjbxuIQGSmcIE7r48ZexQ==
@@ -3451,7 +3446,7 @@ dyna-node-console@^1.0.7:
   dependencies:
     chalk "^2.4.1"
 
-dyna-node-fs@^1.0.2, dyna-node-fs@^1.0.4:
+dyna-node-fs@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/dyna-node-fs/-/dyna-node-fs-1.0.4.tgz#553f43577049c4e8d5fb49c6b80bb6b0269ac4ff"
   integrity sha512-kQRlMQTn42GK5i9znkNicn/ZrWXzP3DnSZM6ZL6kfnbNdNAddfqZZOUw0YPDxfL/B8pp0lE7u23mOR4753s+xw==
