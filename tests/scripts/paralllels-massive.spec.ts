@@ -33,7 +33,7 @@ describe('Dyna Queue Handler, Parallels Massive', () => {
       memoryDelAll: () => memory.delAll(),
     });
 
-    queue.init().then(() => done());
+    done();
   });
 
   afterAll(async (done) => {
@@ -50,7 +50,7 @@ describe('Dyna Queue Handler, Parallels Massive', () => {
     await new Promise(r => setTimeout(r, 1400));
     expect(processedPackets).toBe(100);
 
-    await queue.isNotWorking();
+    await queue.allDone();
 
     done();
   });

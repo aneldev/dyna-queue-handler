@@ -11,7 +11,7 @@ describe('Dyna Queue Handler, Parallels with timeout (realistic)', () => {
   let queue: DynaQueueHandler;
   let processedPackets: number;
 
-  beforeAll((done) => {
+  beforeAll(() => {
     const memoryType: 'disk' | 'memory' = 'memory';
     let diskMemory = new DynaDiskMemory({
       diskPath: './temp/testDynaQueueHandler-priority-test',
@@ -34,8 +34,6 @@ describe('Dyna Queue Handler, Parallels with timeout (realistic)', () => {
       memoryDel: (key) => memory.del('data', key),
       memoryDelAll: () => memory.delAll(),
     });
-
-    queue.init().then(() => done());
   });
 
   afterAll(async (done) => {
@@ -44,37 +42,44 @@ describe('Dyna Queue Handler, Parallels with timeout (realistic)', () => {
   })
 
   test('Should execute and the stacked parallel jobs', async (done) => {
+    await Promise.all(
+      count(10)
+        .map(() => queue.addJob(null))
+    );
+
+    expect(queue.jobsCount).toBe(10);
+
+    expect(processedPackets).toBe(0);
+
     queue.start();
 
-    count(10)
-      .for(() => queue.addJob(null));
+    expect(processedPackets).toBe(0);
 
-    await new Promise(r => setTimeout(r, 400));
-    expect(processedPackets).toBeGreaterThanOrEqual(5);
-    expect(processedPackets).toBeLessThan(10);
+    await queue.allDone();
 
-    await new Promise(r => setTimeout(r, 400));
     expect(processedPackets).toBe(10);
-
-    await queue.isNotWorking();
 
     done();
   });
 
   test('Should execute and the stacked parallel jobs again', async (done) => {
     processedPackets = 0;
+    await Promise.all(
+      count(10)
+        .map(() => queue.addJob(null))
+    );
 
-    count(10)
-      .for(() => queue.addJob(null));
+    expect(queue.jobsCount).toBe(10);
 
-    await new Promise(r => setTimeout(r, 400));
-    expect(processedPackets).toBeGreaterThanOrEqual(5);
-    expect(processedPackets).toBeLessThan(10);
+    expect(processedPackets).toBe(0);
 
-    await new Promise(r => setTimeout(r, 400));
+    queue.start();
+
+    expect(processedPackets).toBe(0);
+
+    await queue.allDone();
+
     expect(processedPackets).toBe(10);
-
-    await queue.isNotWorking();
 
     done();
   });

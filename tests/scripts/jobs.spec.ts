@@ -1,19 +1,19 @@
 import "jest";
+
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
-import {count} from "dyna-count";
-import {DynaDiskMemory} from "dyna-disk-memory/dist/commonJs/node";
+import { count } from "dyna-count";
 
-import {DynaQueueHandler} from "../../src";
-import {delay} from "../../src/utils/delay";
+import { DynaQueueHandler } from "../../src";
+import { delay } from "../../src/utils/delay";
+import { DynaRamDisk } from "../utils/DynaRamDisk";
 
 describe('Dyna Queue Handler, jobs getter', () => {
-  it('should be able to get all current jobs', (done: Function) => {
+  it('should be able to get all current jobs', (done) => {
     const COUNT = 10;
-    const DELAY = 5;
-    const memory = new DynaDiskMemory({
-      diskPath: './temp/testDynaQueueHandler-fast-entry-test',
-    });
+    const DELAY = 100;
+    const memory = new DynaRamDisk();
+
     const queue = new DynaQueueHandler({
       onJob: async (jobData: any) => {
         if (jobData === 'completed') {
@@ -29,10 +29,11 @@ describe('Dyna Queue Handler, jobs getter', () => {
     });
 
     Promise.resolve()
-      .then(() => queue.init())
       .then(() => Promise.all(
         count(COUNT)
-          .map(serial => queue.addJob({ serial }))
+          .map(serial => {
+            return queue.addJob({ serial });
+          })
       ))
       .then(() => expect(queue.jobsCount).toBe(COUNT))
       .then(() => {
@@ -40,11 +41,8 @@ describe('Dyna Queue Handler, jobs getter', () => {
           .then(jobs => expect(jobs).toMatchSnapshot());
       })
       .then(() => queue.addJob('completed'))
-      .then(() => queue.isNotWorking())
+      .then(() => queue.allDone())
       .then(() => expect(queue.jobsCount).toBe(0))
-      .catch(error => {
-        console.error('error', error);
-        done();
-      });
+      .catch(fail);
   });
 });

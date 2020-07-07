@@ -20,7 +20,7 @@ describe('Dyna Queue Handler priority test', () => {
   });
   let queue: DynaQueueHandler;
 
-  it('should create the queue', (done: Function) => {
+  it('should create the queue', () => {
     queue = new DynaQueueHandler({
       onJob: async (data: IParcel) => {
         processed.push(data);
@@ -31,11 +31,9 @@ describe('Dyna Queue Handler priority test', () => {
       memoryDel: (key) => memory.del('data', key),
       memoryDelAll: () => memory.delAll(),
     });
-    queue.init()
-      .then(() => done());
   });
 
-  it('should add 10 jobs with priority 10', (done: () => void) => {
+  it('should add 10 jobs with priority 10', (done) => {
     Promise.all(
       count(10)
         .map(index => queue.addJob<IParcel>({ serial: index }, 10))
@@ -43,7 +41,7 @@ describe('Dyna Queue Handler priority test', () => {
       .then(() => done());
   });
 
-  it('should add 4 jobs with priority 2000', (done: () => void) => {
+  it('should add 4 jobs with priority 2000', (done) => {
     Promise.all(
       count(4)
         .map(index => {
@@ -54,7 +52,7 @@ describe('Dyna Queue Handler priority test', () => {
       .then(() => done());
   });
 
-  it('should add 4 jobs with priority 100', (done: () => void) => {
+  it('should add 4 jobs with priority 100', (done) => {
     Promise.all(
       count(4)
         .map(index => {
@@ -65,12 +63,12 @@ describe('Dyna Queue Handler priority test', () => {
       .then(() => done());
   });
 
-  it('waits will all jobs are done', (done: Function) => {
-    queue.isNotWorking()
+  it('waits will all jobs are done', (done) => {
+    queue.allDone()
       .then(() => done())
   });
 
-  it('should have processed the parcels with correct order', (done: Function) => {
+  it('should have processed the parcels with correct order', (done) => {
     setTimeout(() => {
       expect(
         processed

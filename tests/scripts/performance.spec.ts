@@ -21,7 +21,7 @@ describe('Dyna Queue Handler, Performance', () => {
     serial: Math.random(),
   });
 
-  beforeAll((done) => {
+  beforeAll(() => {
     const memoryType: 'disk' | 'memory' = 'memory';
     let diskMemory = new DynaDiskMemory({
       diskPath: './temp/testDynaQueueHandler-priority-test',
@@ -43,8 +43,6 @@ describe('Dyna Queue Handler, Performance', () => {
       memoryDel: (key) => memory.del('data', key),
       memoryDelAll: () => memory.delAll(),
     });
-
-    queue.init().then(() => done());
   });
 
   afterAll(async (done) => {
@@ -76,7 +74,7 @@ describe('Dyna Queue Handler, Performance', () => {
     executeStart = Date.now();
     queue.start();
 
-    await queue.isNotWorking();
+    await queue.allDone();
 
     executeEnd = Date.now();
     console.log('Execution', executeEnd - executeStart);

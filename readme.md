@@ -31,13 +31,11 @@ _Typescript example_
     }
   });
 
-  await queue.init();
-
   queue.addJob<IParcel>({serial: "y"}, 200);          // push something with priority 100 (smaller have priority)
   queue.addJob<IParcel>({serial: "z"}, 2000);         // push something no so urgent
 
-  queue.isNotWorking()
-    .then(() => consol.log('Nothing in the queue'));    // you may shut down safely
+  queue.allDone()
+    .then(() => consol.log('Nothing in the queue and is not working'));    // you may shut down safely
 
 ```
 
@@ -61,10 +59,6 @@ interface IDynaQueueHandlerConfig<TData> {
 
 # Methods
 
-## init(): Promise<void>
-
-It is needed to call it before any operation.
-
 ## start(): void
 
 Start the processing of the jobs. The default configuration has the `autoStart: true` so is not required to call it.
@@ -79,7 +73,7 @@ Add a job providing data for this job and optionally priority.
 
 Smaller priorities will be processed first.
 
-## isNotWorking(): Promise<void>
+## allDone(): Promise<void>
 
 A promise that it is resolved when all jobs have been processed.
 
@@ -134,3 +128,11 @@ New properties
 - stop(): void
 - get jobs(): Promise<any[]>
 - get processingJobsCount(): number
+
+# 7.0.0
+
+- Better performance
+- No `init()` is needed anymore
+- The delete operations done in background
+- The `isNotWorking` is renamed to `allDone`
+

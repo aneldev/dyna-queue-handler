@@ -8,7 +8,7 @@ import {DynaQueueHandler} from "../../src";
 import {delay} from "../../src/utils/delay";
 
 describe('Dyna Queue Handler, jobCount', () => {
-  it('should have the proper jobCount value', (done: Function) => {
+  it('should have the proper jobCount value', (done) => {
     const COUNT = 100;
     const DELAY = 5;
     const memory = new DynaDiskMemory({
@@ -30,19 +30,15 @@ describe('Dyna Queue Handler, jobCount', () => {
     });
 
     Promise.resolve()
-      .then(() => queue.init())
       .then(() => Promise.all(
         count(COUNT)
           .map(serial => queue.addJob(serial))
       ))
       .then(() => expect(queue.jobsCount).toBe(COUNT))
-      .then(() => expect(queue.processingJobsCount).toBe(2))
       .then(() => queue.addJob('completed'))
-      .then(() => queue.isNotWorking())
+      .then(() => queue.allDone())
       .then(() => expect(queue.jobsCount).toBe(0))
-      .catch(error => {
-        console.error('error', error);
-        done();
-      });
+      .catch(fail)
+      .then(done);
   });
 });

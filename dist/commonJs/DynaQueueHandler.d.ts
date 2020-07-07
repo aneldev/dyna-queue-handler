@@ -10,21 +10,18 @@ export interface IDynaQueueHandlerConfig<TData> {
 export declare class DynaQueueHandler {
     private readonly _config;
     constructor(_config: IDynaQueueHandlerConfig<any>);
-    private _initialized;
     private _active;
-    private _queue;
     private _isWorking;
     private _jobIndex;
     private _jobs;
-    init(): Promise<void>;
+    private _allDoneCallbacks;
     start(): void;
     stop(): void;
-    isNotWorking(): Promise<void>;
-    addJob<TData>(data?: TData, priority?: number): Promise<void>;
+    allDone(): Promise<void>;
+    addJob<TData>(data?: TData, priority?: number, _debug_message?: string): Promise<void>;
     private _processQueuedItem;
     readonly jobs: Promise<any[]>;
+    readonly isWorking: boolean;
     readonly hasJobs: boolean;
     readonly jobsCount: number;
-    readonly processingJobsCount: number;
-    readonly isWorking: boolean;
 }
