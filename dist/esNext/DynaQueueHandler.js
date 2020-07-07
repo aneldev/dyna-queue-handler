@@ -1,14 +1,3 @@
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -45,52 +34,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { guid } from "dyna-guid";
-import { EErrorType } from "dyna-interfaces";
-import { DynaJobQueue } from "dyna-job-queue/dist/commonJs";
 var DynaQueueHandler = /** @class */ (function () {
     function DynaQueueHandler(_config) {
         this._config = _config;
-        this._initialized = false;
-        this._isWorking = false;
+        this._guidBase = guid();
+        this._guidCount = 0;
+        this._workingParallels = 0;
         this._jobIndex = 0;
         this._jobs = [];
-        this._config = __assign({ parallels: 1 }, this._config);
+        this._allDoneCallbacks = [];
         this._active = this._config.autoStart === undefined
             ? true
             : this._config.autoStart;
     }
-    DynaQueueHandler.prototype.init = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var error_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (this._initialized)
-                            return [2 /*return*/];
-                        this._initialized = true;
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        this._queue = new DynaJobQueue({ parallels: this._config.parallels });
-                        this.addJob = this._queue.jobFactory(this.addJob.bind(this));
-                        this._processQueuedItem = this._queue.jobFactory(this._processQueuedItem.bind(this)); // This is only for the 1st calls synchronization with the init
-                        return [4 /*yield*/, this._config.memoryDelAll()];
-                    case 2:
-                        _a.sent();
-                        return [3 /*break*/, 4];
-                    case 3:
-                        error_1 = _a.sent();
-                        throw {
-                            code: 1810261314,
-                            errorType: EErrorType.HW,
-                            message: 'DynaQueueHandler, error cleaning the previous session',
-                            error: error_1,
-                        };
-                    case 4: return [2 /*return*/];
-                }
-            });
-        });
-    };
     DynaQueueHandler.prototype.start = function () {
         this._active = true;
         this._processQueuedItem();
@@ -98,38 +54,20 @@ var DynaQueueHandler = /** @class */ (function () {
     DynaQueueHandler.prototype.stop = function () {
         this._active = false;
     };
-    DynaQueueHandler.prototype.isNotWorking = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            return __generator(this, function (_a) {
-                if (!this.isWorking)
-                    return [2 /*return*/];
-                return [2 /*return*/, this._queue.addJobPromised(function () { return __awaiter(_this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            if (!this.isWorking)
-                                return [2 /*return*/];
-                            else
-                                throw {};
-                            return [2 /*return*/];
-                        });
-                    }); })
-                        .catch(function () { return _this.isNotWorking(); })];
-            });
-        });
+    DynaQueueHandler.prototype.allDone = function () {
+        var _this = this;
+        if (!this.isWorking && !this.hasJobs)
+            return Promise.resolve();
+        return new Promise(function (resolve) { return _this._allDoneCallbacks.push(resolve); });
     };
-    DynaQueueHandler.prototype.addJob = function (data, priority) {
+    DynaQueueHandler.prototype.addJob = function (data, priority, _debug_message) {
         if (priority === void 0) { priority = 1; }
         return __awaiter(this, void 0, void 0, function () {
-            var errorMessage, jobId;
+            var jobId;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this._initialized) {
-                            errorMessage = 'DynaQueueHandler is not initialized! Call `.init()` where is `:Promise<void>` before any call.';
-                            console.error(errorMessage);
-                            throw { message: errorMessage };
-                        }
-                        jobId = guid(1);
+                        jobId = this._guid;
                         return [4 /*yield*/, this._config.memorySet(jobId, data)];
                     case 1:
                         _a.sent();
@@ -152,10 +90,12 @@ var DynaQueueHandler = /** @class */ (function () {
                     case 0:
                         if (!this._active)
                             return [2 /*return*/];
+                        if (this._workingParallels >= this._configParallels)
+                            return [2 /*return*/];
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 7, , 8]);
-                        this._isWorking = true;
+                        _a.trys.push([1, 7, 8, 9]);
+                        this._workingParallels++;
                         jobItem = this._jobs.shift();
                         if (!jobItem) return [3 /*break*/, 6];
                         return [4 /*yield*/, this._config.memoryGet(jobItem.jobId)];
@@ -166,25 +106,33 @@ var DynaQueueHandler = /** @class */ (function () {
                         _a.label = 3;
                     case 3:
                         _a.trys.push([3, 5, , 6]);
+                        this._processQueuedItem(); // Run next parallel
                         return [4 /*yield*/, this._config.onJob(data)];
                     case 4:
-                        _a.sent();
+                        _a.sent(); // Run the current job
                         return [3 /*break*/, 6];
                     case 5:
                         e_1 = _a.sent();
                         console.error('DynaQueueHandler: onJob error', e_1);
                         return [3 /*break*/, 6];
-                    case 6:
-                        this._isWorking = false;
-                        return [3 /*break*/, 8];
+                    case 6: return [3 /*break*/, 9];
                     case 7:
                         e_2 = _a.sent();
                         console.error('DynaQueueHandler _processQueuedItem error', e_2);
-                        this._isWorking = false;
-                        return [3 /*break*/, 8];
+                        return [3 /*break*/, 9];
                     case 8:
-                        if (this.hasJobs)
+                        this._workingParallels--;
+                        return [7 /*endfinally*/];
+                    case 9:
+                        if (this.hasJobs) {
                             this._processQueuedItem();
+                        }
+                        else if (!this.isWorking) {
+                            while (this._allDoneCallbacks.length) {
+                                // @ts-ignore
+                                this._allDoneCallbacks.shift()();
+                            }
+                        }
                         return [2 /*return*/];
                 }
             });
@@ -198,30 +146,46 @@ var DynaQueueHandler = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(DynaQueueHandler.prototype, "isWorking", {
+        get: function () {
+            return this._workingParallels > 0;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(DynaQueueHandler.prototype, "hasJobs", {
         get: function () {
-            return !!this.jobsCount;
+            return !!this._jobs.length;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(DynaQueueHandler.prototype, "jobsCount", {
         get: function () {
-            return this._jobs.length + (this._isWorking ? this._queue.stats.running : 0);
+            return this._jobs.length + this._workingParallels;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(DynaQueueHandler.prototype, "processingJobsCount", {
         get: function () {
-            return this._queue.stats.running;
+            return this._workingParallels;
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(DynaQueueHandler.prototype, "isWorking", {
+    Object.defineProperty(DynaQueueHandler.prototype, "_configParallels", {
         get: function () {
-            return this.hasJobs || this._isWorking;
+            return this._config.parallels === undefined
+                ? 1
+                : this._config.parallels;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(DynaQueueHandler.prototype, "_guid", {
+        get: function () {
+            return this._guidBase + (this._guidCount++);
         },
         enumerable: true,
         configurable: true
