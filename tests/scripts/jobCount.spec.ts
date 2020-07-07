@@ -15,12 +15,10 @@ describe('Dyna Queue Handler, jobCount', () => {
       diskPath: './temp/testDynaQueueHandler-fast-entry-test',
     });
     const queue = new DynaQueueHandler({
+      autoStart: false,
       parallels: 2,
       onJob: async (jobData: any) => {
-        if (jobData === 'completed') {
-          done();
-          return;
-        }
+        jobData; // Just for TS
         await delay(DELAY);
       },
       memorySet: (key, data) => memory.set('data', key, data),
@@ -35,7 +33,9 @@ describe('Dyna Queue Handler, jobCount', () => {
           .map(serial => queue.addJob(serial))
       ))
       .then(() => expect(queue.jobsCount).toBe(COUNT))
-      .then(() => queue.addJob('completed'))
+      .then(() => queue.start())
+      .then(() => queue.processingJobsCount === 2)
+      .then(() => queue.processingJobsCount === 2)
       .then(() => queue.allDone())
       .then(() => expect(queue.jobsCount).toBe(0))
       .catch(fail)

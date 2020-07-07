@@ -10,8 +10,10 @@ export interface IDynaQueueHandlerConfig<TData> {
 export declare class DynaQueueHandler {
     private readonly _config;
     constructor(_config: IDynaQueueHandlerConfig<any>);
+    private _guidBase;
+    private _guidCount;
     private _active;
-    private _isWorking;
+    private _workingParallels;
     private _jobIndex;
     private _jobs;
     private _allDoneCallbacks;
@@ -24,4 +26,7 @@ export declare class DynaQueueHandler {
     readonly isWorking: boolean;
     readonly hasJobs: boolean;
     readonly jobsCount: number;
+    readonly processingJobsCount: number;
+    private readonly _configParallels;
+    private readonly _guid;
 }

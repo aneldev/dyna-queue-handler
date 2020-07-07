@@ -17,17 +17,15 @@ interface IJob {
 
 export class DynaQueueHandler {
   constructor(private readonly _config: IDynaQueueHandlerConfig<any>) {
-    this._config = {
-      parallels: 1,
-      ...this._config,
-    };
     this._active = this._config.autoStart === undefined
       ? true
       : this._config.autoStart;
   }
 
+  private _guidBase = guid();
+  private _guidCount = 0;
   private _active: boolean;
-  private _isWorking: boolean = false;
+  private _workingParallels: number = 0;
 
   private _jobIndex: number = 0;
   private _jobs: Array<IJob> = [];
@@ -48,7 +46,7 @@ export class DynaQueueHandler {
   }
 
   public async addJob<TData>(data?: TData, priority: number = 1, _debug_message?: string): Promise<void> {
-    const jobId: string = guid(1);
+    const jobId: string = this._guid;
     await this._config.memorySet(jobId, data);
 
     this._jobs.push({
@@ -63,16 +61,17 @@ export class DynaQueueHandler {
 
   private async _processQueuedItem(): Promise<void> {
     if (!this._active) return;
-    if (this._isWorking) return;
+    if (this._workingParallels >= this._configParallels) return;
     try {
-      this._isWorking = true;
+      this._workingParallels++;
       const jobItem = this._jobs.shift();
       if (jobItem) {
         const data = await this._config.memoryGet(jobItem.jobId);
         this._config.memoryDel(jobItem.jobId) // Delete this without wait, to improve performance
           .catch(e => console.error('DynaQueueHandler: processQueuedItem, cannot memoryDel', e));
         try {
-          await this._config.onJob(data);
+          this._processQueuedItem();        // Run next parallel
+          await this._config.onJob(data);   // Run the current job
         } catch (e) {
           console.error('DynaQueueHandler: onJob error', e);
         }
@@ -80,13 +79,13 @@ export class DynaQueueHandler {
     } catch (e) {
       console.error('DynaQueueHandler _processQueuedItem error', e);
     } finally {
-      this._isWorking = false;
+      this._workingParallels--;
     }
 
     if (this.hasJobs) {
       this._processQueuedItem();
     }
-    else {
+    else if (!this.isWorking) {
       while (this._allDoneCallbacks.length) {
         // @ts-ignore
         this._allDoneCallbacks.shift()();
@@ -101,7 +100,7 @@ export class DynaQueueHandler {
   }
 
   public get isWorking(): boolean {
-    return this._isWorking;
+    return this._workingParallels > 0;
   }
 
   public get hasJobs(): boolean {
@@ -109,6 +108,20 @@ export class DynaQueueHandler {
   }
 
   public get jobsCount(): number {
-    return this._jobs.length + (this._isWorking ? 1 : 0);
+    return this._jobs.length + this._workingParallels;
+  }
+
+  public get processingJobsCount(): number {
+    return this._workingParallels;
+  }
+
+  private get _configParallels(): number {
+    return this._config.parallels === undefined
+      ? 1
+      : this._config.parallels;
+  }
+
+  private get _guid(): string {
+    return this._guidBase + (this._guidCount++);
   }
 }

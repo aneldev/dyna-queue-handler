@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -50,11 +39,12 @@ var dyna_guid_1 = require("dyna-guid");
 var DynaQueueHandler = /** @class */ (function () {
     function DynaQueueHandler(_config) {
         this._config = _config;
-        this._isWorking = false;
+        this._guidBase = dyna_guid_1.guid();
+        this._guidCount = 0;
+        this._workingParallels = 0;
         this._jobIndex = 0;
         this._jobs = [];
         this._allDoneCallbacks = [];
-        this._config = __assign({ parallels: 1 }, this._config);
         this._active = this._config.autoStart === undefined
             ? true
             : this._config.autoStart;
@@ -79,7 +69,7 @@ var DynaQueueHandler = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        jobId = dyna_guid_1.guid(1);
+                        jobId = this._guid;
                         return [4 /*yield*/, this._config.memorySet(jobId, data)];
                     case 1:
                         _a.sent();
@@ -102,12 +92,12 @@ var DynaQueueHandler = /** @class */ (function () {
                     case 0:
                         if (!this._active)
                             return [2 /*return*/];
-                        if (this._isWorking)
+                        if (this._workingParallels >= this._configParallels)
                             return [2 /*return*/];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 7, 8, 9]);
-                        this._isWorking = true;
+                        this._workingParallels++;
                         jobItem = this._jobs.shift();
                         if (!jobItem) return [3 /*break*/, 6];
                         return [4 /*yield*/, this._config.memoryGet(jobItem.jobId)];
@@ -118,9 +108,10 @@ var DynaQueueHandler = /** @class */ (function () {
                         _a.label = 3;
                     case 3:
                         _a.trys.push([3, 5, , 6]);
+                        this._processQueuedItem(); // Run next parallel
                         return [4 /*yield*/, this._config.onJob(data)];
                     case 4:
-                        _a.sent();
+                        _a.sent(); // Run the current job
                         return [3 /*break*/, 6];
                     case 5:
                         e_1 = _a.sent();
@@ -132,13 +123,13 @@ var DynaQueueHandler = /** @class */ (function () {
                         console.error('DynaQueueHandler _processQueuedItem error', e_2);
                         return [3 /*break*/, 9];
                     case 8:
-                        this._isWorking = false;
+                        this._workingParallels--;
                         return [7 /*endfinally*/];
                     case 9:
                         if (this.hasJobs) {
                             this._processQueuedItem();
                         }
-                        else {
+                        else if (!this.isWorking) {
                             while (this._allDoneCallbacks.length) {
                                 // @ts-ignore
                                 this._allDoneCallbacks.shift()();
@@ -159,7 +150,7 @@ var DynaQueueHandler = /** @class */ (function () {
     });
     Object.defineProperty(DynaQueueHandler.prototype, "isWorking", {
         get: function () {
-            return this._isWorking;
+            return this._workingParallels > 0;
         },
         enumerable: true,
         configurable: true
@@ -173,7 +164,30 @@ var DynaQueueHandler = /** @class */ (function () {
     });
     Object.defineProperty(DynaQueueHandler.prototype, "jobsCount", {
         get: function () {
-            return this._jobs.length + (this._isWorking ? 1 : 0);
+            return this._jobs.length + this._workingParallels;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(DynaQueueHandler.prototype, "processingJobsCount", {
+        get: function () {
+            return this._workingParallels;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(DynaQueueHandler.prototype, "_configParallels", {
+        get: function () {
+            return this._config.parallels === undefined
+                ? 1
+                : this._config.parallels;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(DynaQueueHandler.prototype, "_guid", {
+        get: function () {
+            return this._guidBase + (this._guidCount++);
         },
         enumerable: true,
         configurable: true

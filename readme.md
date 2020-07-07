@@ -61,11 +61,11 @@ interface IDynaQueueHandlerConfig<TData> {
 
 ## start(): void
 
-Start the processing of the jobs. The default configuration has the `autoStart: true` so is not required to call it.
+Start running jobs. The default configuration has the `autoStart: true` so is not required to call it.
 
 ## stop(): void
 
-Stops the processing of the jobs.
+Will stop running jobs.
 
 ## addJob<TData>(data?: TData, priority: number = 1): Promise<void>
 
@@ -88,7 +88,7 @@ Example:
 ```
 ## get hasJobs(): boolean
 
-Returns true if it has pending or processing jobs.
+Returns true if it has pending or running jobs.
 
 ```
   const hasPendingJobs = await queue.hasJobs;
@@ -96,7 +96,7 @@ Returns true if it has pending or processing jobs.
 
 ## get jobsCount(): number
 
-Returns the number of pending and processing jobs.
+Returns the number of pending and running jobs.
 
 ## get processingJobsCount(): number
 
