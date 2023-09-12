@@ -3,7 +3,7 @@ import {guid} from "dyna-guid";
 export interface IDynaQueueHandlerConfig<TData> {
   parallels?: number;
   autoStart?: boolean;
-  onJob: (data?: TData) => Promise<void>;
+  onJob: (data: TData) => Promise<void>;
   memorySet: (key: string, data: TData) => Promise<void>;
   memoryGet: (key: string) => Promise<TData>;
   memoryDel: (key: string) => Promise<void>;
@@ -70,7 +70,7 @@ export class DynaQueueHandler<TData = any> {
         this._config.memoryDel(jobItem.jobId) // Delete this without wait, to improve performance
           .catch(e => console.error('DynaQueueHandler: processQueuedItem, cannot memoryDel', e));
         try {
-          this._processQueuedItem();        // Run next parallel
+          this._processQueuedItem();              // Run next parallel
           await this._config.onJob(data);   // Run the current job
         } catch (e) {
           console.error('DynaQueueHandler: onJob error', e);
