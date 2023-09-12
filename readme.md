@@ -1,138 +1,139 @@
-﻿# About
+﻿# DynaQueueHandler - A Utility Library for Managing Queued Jobs
 
-`DynaQueueHandler` is a Queue Job handler for node.js services or for web browser applications.
+The `DynaQueueHandler` class is a powerful utility library designed to help you manage queued jobs efficiently. It allows you to control the parallel execution of asynchronous tasks, making it ideal for scenarios where you need to manage concurrency and ensure job execution order.
 
-- intensive calls of `addJob`
-- promises
-- configurable parallels
-- uses your memory implementation
+**DynaQueueHandler is a robust and widely used library in production non-public projects. It is written in TypeScript and serves as a handler for processing heavy data loads in both Node.js and web applications.**
 
-It is written in Typescript but can be used from plain Javascript as well.
+## Installation
 
-# Installation
+To use `DynaQueueHandler` in your node.js or web project, you can install it via npm:
 
-`npm install --save dyna-queue-handler`
-
-# Usage
-_Typescript example_
-
-```
-  import {DynaQueueHandler} from 'dyna-queue-handler';
-
-  interface IParcel {                                 // out type of data
-    serial: string;
-  }
-
-  let queue = new DynaQueueHandler({
-    diskPath: './temp/my-process-temp-space',         // needed in both nodejs and web
-    parallels: 5,                                     // (default 1) how may parallel jobs might be executed at a time
-    onJob: async (data: IParcel): Promise<void> => {  // return a promise to continue
-      // process the data here
-    }
-  });
-
-  queue.addJob<IParcel>({serial: "y"}, 200);          // push something with priority 100 (smaller have priority)
-  queue.addJob<IParcel>({serial: "z"}, 2000);         // push something no so urgent
-
-  queue.allDone()
-    .then(() => consol.log('Nothing in the queue and is not working'));    // you may shut down safely
-
+```bash
+npm install dyna-queue-handler
 ```
 
-# Configuration
+## Usage
 
+### Importing the Library
+
+```javascript
+import { DynaQueueHandler } from "dyna-queue-handler";
 ```
-interface IDynaQueueHandlerConfig<TData> {
-  parallels?: number;       // default: 1
-  autoStart?: boolean;      // default: true
 
-  // Handler to process a job
-  onJob: (data: TData) => Promise<void>;
+### Creating an Instance
 
-  // Handler to read and write data to a storage of your choice
-  memorySet: (key: string, data: any) => Promise<void>;
-  memoryGet: (key: string) => Promise<any>;
-  memoryDel: (key: string) => Promise<void>;
-  memoryDelAll: () => Promise<void>;
+To create an instance of `DynaQueueHandler`, you need to provide a configuration object that defines the behavior of the queue handler. Here's an example of how to create an instance:
+
+```javascript
+const queueHandler = new DynaQueueHandler({
+  parallels: 3, // Number of parallel jobs to execute (optional, defaults to 1)
+  autoStart: true, // Whether to start processing jobs automatically (optional, defaults to true)
+  onJob: async (data) => {
+    // The function to execute for each job
+    // You can define your job processing logic here
+  },
+  memorySet: async (key, data) => {
+    // Function to store data in memory
+  },
+  memoryGet: async (key) => {
+    // Function to retrieve data from memory
+  },
+  memoryDel: async (key) => {
+    // Function to delete data from memory
+  },
+  memoryDelAll: async () => {
+    // Function to delete all data from memory
+  },
+});
+```
+
+The "memory" callbacks provide you with the freedom to choose the type of memory storage you want to use. With these callbacks, you can use anything from simple memory to a database. The choice is yours.
+
+### Starting and Stopping the Queue
+
+You can start and stop the queue handler using the following methods:
+
+```javascript
+queueHandler.start(); // Start processing jobs
+queueHandler.stop();  // Stop processing jobs
+```
+
+### Adding Jobs to the Queue
+
+To add a job to the queue, use the `addJob` method. You can specify the data for the job and an optional priority level:
+
+```javascript
+await queueHandler.addJob({/* your job data */}, /* priority */);
+```
+
+### Monitoring Queue Status
+
+You can monitor the status of the queue using the following properties and methods:
+
+- `queueHandler.isWorking`: Returns `true` if there are active jobs being processed.
+- `queueHandler.hasJobs`: Returns `true` if there are pending jobs in the queue.
+- `queueHandler.jobsCount`: Returns the total number of jobs (including processing).
+- `queueHandler.processingJobsCount`: Returns the number of currently processing jobs.
+- `queueHandler.allDone()`: Returns a promise that resolves when all jobs are completed.
+
+## Example
+
+Here's a simple example of how to use `DynaQueueHandler`:
+
+```typescript
+import { DynaQueueHandler } from "dyna-queue-handler";
+
+// Define the IPerson interface
+interface IPerson {
+  displayName: string;
+  start: number;
 }
+
+// Create a DynaQueueHandler instance with configuration
+const queueHandler = new DynaQueueHandler<IPerson>({
+  parallels: 2,
+  onJob: async (data) => {
+    console.log(`Processing job for ${data.displayName} (started at ${data.start})`);
+    // Simulate job execution
+    await new Promise<void>((resolve) => setTimeout(resolve, 1000));
+  },
+  memorySet: async (key, data) => {
+    // Implement your memory set logic here
+    // For example, using an in-memory object:
+    memoryStorage[key] = data;
+  },
+  memoryGet: async (key) => {
+    // Implement your memory get logic here
+    // For example, using an in-memory object:
+    return memoryStorage[key];
+  },
+  memoryDel: async (key) => {
+    // Implement your memory delete logic here
+    // For example, using an in-memory object:
+    delete memoryStorage[key];
+  },
+  memoryDelAll: async () => {
+    // Implement your memory delete all logic here
+    // For example, using an in-memory object:
+    memoryStorage = {};
+  },
+});
+
+// Start processing jobs
+queueHandler.start();
+
+// In-memory storage (replace with your preferred storage mechanism)
+let memoryStorage: { [key: string]: IPerson } = {};
+
+// Add jobs to the queue
+await queueHandler.addJob<IPerson>({ displayName: "Person 1", start: Date.now() });
+await queueHandler.addJob<IPerson>({ displayName: "Person 2", start: Date.now() });
+await queueHandler.addJob<IPerson>({ displayName: "Person 3", start: Date.now() });
+
+// Wait for all jobs to complete
+await queueHandler.allDone();
+
+// Stop the queue
+queueHandler.stop();
 ```
-
-# Methods
-
-## start(): void
-
-Start running jobs. The default configuration has the `autoStart: true` so is not required to call it.
-
-## stop(): void
-
-Will stop running jobs.
-
-## addJob<TData>(data?: TData, priority: number = 1): Promise<void>
-
-Add a job providing data for this job and optionally priority.
-
-Smaller priorities will be processed first.
-
-## allDone(): Promise<void>
-
-A promise that it is resolved when all jobs have been processed.
-
-## get jobs(): Promise<any[]>
-
-A promised getter to get all pending jobs (excluding the current).
-
-Example: 
-
-```
-  const pendingJobs = await queue.jobs;
-```
-## get hasJobs(): boolean
-
-Returns true if it has pending or running jobs.
-
-```
-  const hasPendingJobs = await queue.hasJobs;
-```
-
-## get jobsCount(): number
-
-Returns the number of pending and running jobs.
-
-## get processingJobsCount(): number
-
-Returns the number of jobs that are currently processed. This number is less or equal to the `parallels` of the configuration.
-
-# Change log
-
-# 4.0.0
-
-Stable version
-
-# 5.0.0
-
-The `onJob` is now Promise instead of using the `done()` callback.
-
-# 6.0.0
-
-You have to provide storage methods in the configuration `memorySet/Get/Del/DelAll`.
-
-You can use the [dyna-disk-memory](https://github.com/aneldev/dyna-disk-memory) where it has an implementation for `nodeJS` using physical disk, or `web browser` where is uses the `localstorage`.
-
-OR you can implement your storage implementing the `memorySet/Get/Del/DelAll`.
-
-# 6.1.0
-
-New properties
-
-- start(): void
-- stop(): void
-- get jobs(): Promise<any[]>
-- get processingJobsCount(): number
-
-# 7.0.0
-
-- Better performance
-- No `init()` is needed anymore
-- The delete operations done in background
-- The `isNotWorking` is renamed to `allDone`
 
