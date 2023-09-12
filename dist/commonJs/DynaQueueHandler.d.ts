@@ -1,7 +1,7 @@
 export interface IDynaQueueHandlerConfig<TData> {
     parallels?: number;
     autoStart?: boolean;
-    onJob: (data?: TData) => Promise<void>;
+    onJob: (data: TData) => Promise<void>;
     memorySet: (key: string, data: TData) => Promise<void>;
     memoryGet: (key: string) => Promise<TData>;
     memoryDel: (key: string) => Promise<void>;
