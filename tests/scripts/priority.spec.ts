@@ -36,7 +36,7 @@ describe('Dyna Queue Handler priority test', () => {
   it('should add 10 jobs with priority 10', (done) => {
     Promise.all(
       count(10)
-        .map(index => queue.addJob<IParcel>({ serial: index }, 10))
+        .map(index => queue.addJob({ serial: index }, 10))
     )
       .then(() => done());
   });
@@ -46,7 +46,7 @@ describe('Dyna Queue Handler priority test', () => {
       count(4)
         .map(index => {
           const serial: number = index + 200;
-          queue.addJob<IParcel>({ serial }, 2000);
+          queue.addJob({ serial }, 2000);
         })
     )
       .then(() => done());
@@ -57,7 +57,7 @@ describe('Dyna Queue Handler priority test', () => {
       count(4)
         .map(index => {
           const serial: number = index + 100;
-          queue.addJob<IParcel>({ serial }, 100);
+          queue.addJob({ serial }, 100);
         })
     )
       .then(() => done());

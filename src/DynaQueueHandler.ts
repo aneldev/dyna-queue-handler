@@ -4,8 +4,8 @@ export interface IDynaQueueHandlerConfig<TData> {
   parallels?: number;
   autoStart?: boolean;
   onJob: (data?: TData) => Promise<void>;
-  memorySet: (key: string, data: any) => Promise<void>;
-  memoryGet: (key: string) => Promise<any>;
+  memorySet: (key: string, data: TData) => Promise<void>;
+  memoryGet: (key: string) => Promise<TData>;
   memoryDel: (key: string) => Promise<void>;
   memoryDelAll: () => Promise<void>;
 }
@@ -15,8 +15,8 @@ interface IJob {
   jobId: string;
 }
 
-export class DynaQueueHandler {
-  constructor(private readonly _config: IDynaQueueHandlerConfig<any>) {
+export class DynaQueueHandler<TData = any> {
+  constructor(private readonly _config: IDynaQueueHandlerConfig<TData>) {
     this._active = this._config.autoStart === undefined
       ? true
       : this._config.autoStart;
@@ -45,7 +45,7 @@ export class DynaQueueHandler {
     return new Promise<void>(resolve => this._allDoneCallbacks.push(resolve))
   }
 
-  public async addJob<TData>(data?: TData, priority: number = 1, _debug_message?: string): Promise<void> {
+  public async addJob(data: TData, priority: number = 1, _debug_message?: string): Promise<void> {
     const jobId: string = this._guid;
     await this._config.memorySet(jobId, data);
 
@@ -93,7 +93,7 @@ export class DynaQueueHandler {
     }
   }
 
-  public get jobs(): Promise<any[]> {
+  public get jobs(): Promise<TData[]> {
     return Promise.all(
       this._jobs.map(jobItem => this._config.memoryGet(jobItem.jobId))
     );

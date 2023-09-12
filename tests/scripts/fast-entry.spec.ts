@@ -119,7 +119,7 @@ describe('Dyna Queue Handler, fast entry', () => {
         serials.push(serial);
       },
       memorySet: (key, data) => memory.set('data', key, data),
-      memoryGet: (key) => memory.get('data', key),
+      memoryGet: (key) => memory.get('data', key) as any,
       memoryDel: (key) => memory.del('data', key),
       memoryDelAll: () => memory.delAll(),
     });
@@ -148,7 +148,7 @@ describe('Dyna Queue Handler, fast entry', () => {
         serials.push(serial);
       },
       memorySet: (key, data) => memory.set('data', key, data),
-      memoryGet: (key) => memory.get('data', key),
+      memoryGet: (key) => memory.get('data', key) as any,
       memoryDel: (key) => memory.del('data', key),
       memoryDelAll: () => memory.delAll(),
     });
