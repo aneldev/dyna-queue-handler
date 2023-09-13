@@ -17,9 +17,8 @@ interface IJob {
 
 export class DynaQueueHandler<TData = any> {
   constructor(private readonly _config: IDynaQueueHandlerConfig<TData>) {
-    this._active = this._config.autoStart === undefined
-      ? true
-      : this._config.autoStart;
+    const { autoStart = true } = this._config;
+    this._active = autoStart;
   }
 
   private _guidBase = guid();
