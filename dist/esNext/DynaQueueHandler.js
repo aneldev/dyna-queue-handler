@@ -43,9 +43,8 @@ var DynaQueueHandler = /** @class */ (function () {
         this._jobIndex = 0;
         this._jobs = [];
         this._allDoneCallbacks = [];
-        this._active = this._config.autoStart === undefined
-            ? true
-            : this._config.autoStart;
+        var _a = this._config.autoStart, autoStart = _a === void 0 ? true : _a;
+        this._active = autoStart;
     }
     DynaQueueHandler.prototype.start = function () {
         this._active = true;
